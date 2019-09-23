@@ -25,7 +25,7 @@ The filter construction proposed is an alternative to BIP 158 filters, with lowe
 
 == Motivation ==
 
-[[bip-0158.mediawiki|BIP 158]] defines filter designed to reduce the filter size for regular wallets and minimize the expected bandwidth consumed by light clients, downloading filters and full blocks.
+Block filters designed to help light clients analize block contents without downloading full blocks and minimize the expected bandwidth consumed. The main difference from BIP 37 approach is no privacy leakage. BIP 158 defines initial filter type <code>basic</code>. This BIP proposed more effective and flexible alternative
 
 Fisrt off all lets determine reasanable number of addresses tracked by a light client in most common case.
 
@@ -34,16 +34,16 @@ received or sent uses one or more new addresses. The wallet makes 2-3 payments p
 of used addresses increases to about 1000 pieces. All addresses that were used at least once should be monitored
 for new payments. Assume in this BIP that a reasonable estimated number of wallet monitoring addresses is 10 000 pieces. 
 
-
 Сonsider the key parameters that the filter should match:
 
 
 ==== False positive rate ====
 
-False positive rate should not be high and provide effective filtering and reduce bandwidth consumprion. False positive rate in BIP 158 is low enough. Lower bandwidth consumption can be achieved while blockchain synchronization with a higher false positive filter and a larger size with the same scheme. Below provided result of test with  10 000 addresses in monitoring for 2000 blocks (7300 addresses each block):
+False positive rate should not be high and provide effective filtering and reduce bandwidth consumprion. False positive rate in BIP 158 is not low enough. Lower bandwidth consumption can be achieved with a lower false positive filter and a larger fiters size with the same scheme. Below provided result of test with  10,000 addresses in monitoring for 2,000 blocks (7,300 addresses each block):
 
 <pre>
-False positive blocks 32 from 2000 
+Parameters for GCS: M=784931 P=19
+False positive blocks 32 from 2,000 
 Filters size:  36.64 Mb
 Downloaded 68.64 Mb (32 blocks included);
 </pre>
@@ -51,7 +51,8 @@ Downloaded 68.64 Mb (32 blocks included);
 Size of downloaded false positive blocks (~32 Mb) can be excluded by use filters with lower false positive rate . 
 
 <pre>
-False positive blocks 0 from 2000
+Parameters for GCS: M=54975581 P=25
+False positive blocks 0 from 2,000
 Download 57.64 Mb  
 Filters size:  57.64 Mb
 </pre>
@@ -60,8 +61,9 @@ Bandwidth consumption reduced about 16%.
 
 ==== Total filters size and filters batching ====
 
-Total filters size for BIP 158 is about 4.5 Gb. It's not so much for a full node, but for light client we 
-need size smaller as possible (to store permanently or download one time for initial sync).
+Total filters size for BIP 158 is about 4.3 Gb ( 596,200 blocks). To achieve a smaller filters size, should take a more flexible approach.
+
+
 
 To achieve best level of privacy and security wallets must follow the rule “no address reuse”,
 but despite the recommendations “no address reuse”, a lot of addresses was reused and will be reused in future. 
