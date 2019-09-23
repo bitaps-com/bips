@@ -14,33 +14,33 @@
 
 ==== To do ====
 * if use filter elements as addreess or script hashes test diffirence if we exclude siphash and just get first 64 bit of already calculated hashes
-* define batching construction algorithm more detailed
-* replace values of duplicated elements in filters level 1 and block filters to pointers for level 2 and level 3 elements.
-  It will give significantly reduce total size of all filters!
+* determine the optimal range for batch 
+
   
 
 == Abstract ==
 
 This BIP describes a new filter types on blocks data, for use in the BIP 157 light client protocol. 
-The filter construction proposed is an alternative to BIP 158 filters, with lower false positive rate
-and block filters aggregated to batches. For compression  using Delta-Huffman coding. This document 
-defines new types of filters that vary in batch size and separated by address types.
+The filter construction proposed is an alternative to BIP 158 filters, with lower filters size, lower false positive rate and  separated by address types.
 
 == Motivation ==
 
-[[bip-0158.mediawiki|BIP 158]] defines the initial filter type basic that is designed to reduce the filter 
-size for regular wallets and minimize the expected bandwidth consumed by light clients, downloading 
-filters and full blocks.
+[[bip-0158.mediawiki|BIP 158]] defines filter designed to reduce the filter size for regular wallets and minimize the expected bandwidth consumed by light clients, downloading filters and full blocks.
 
-==== False positive rate is low ====
+Fisrt off all lets determine reasanable number of addresses tracked by a light client in most common case.
 
 To achieve privacy and security, wallets must follow the rule - no address reuse. This means that each payment
 received or sent uses one or more new addresses. The wallet makes 2-3 payments per day, during the year the number 
 of used addresses increases to about 1000 pieces. All addresses that were used at least once should be monitored
-for new payments. Assume in this BIP that a reasonable estimated number of wallet monitoring addresses is 10000 pieces. 
+for new payments. Assume in this BIP that a reasonable estimated number of wallet monitoring addresses is 10 000 pieces. 
 
-False positive rate in BIP 158 is low. We can achieve lower bandwidth consumption with higher false positive rate filte, 
-while sync blockchain. Below provided result of test with  10000 addresses in monitoring for 2000 blocks (7300 addresses each):
+
+Сonsider the key parameters that the filter should match:
+
+
+==== False positive rate ====
+
+False positive rate should not be high and provide effective filtering and reduce bandwidth consumprion. False positive rate in BIP 158 is low enough. Lower bandwidth consumption can be achieved while blockchain synchronization with a higher false positive filter and a larger size with the same scheme. Below provided result of test with  10 000 addresses in monitoring for 2000 blocks (7300 addresses each block):
 
 <pre>
 False positive blocks 32 from 2000 
@@ -56,8 +56,7 @@ Download 57.64 Mb
 Filters size:  57.64 Mb
 </pre>
 
-Bandwidth consumption reduced about 16%, good result, but is not enough to be reasonable argument to 
-set lower false positive rate and increase filter size.
+Bandwidth consumption reduced about 16%.
 
 ==== Total filters size and filters batching ====
 
