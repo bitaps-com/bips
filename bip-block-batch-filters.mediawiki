@@ -84,7 +84,7 @@ least 2 records for 94% of addresses in blockchain. Each spent utxo have 1 creat
 
 Combining filters for ranges of blocks gives another opportunity to reduce the size of filters. Divide the filter elemnts into 2 part. First one is uniqe elements within range of <code>Q</code> blocks and second is duplicated element in selected block range. 
 
-<img src=bip-block-batch-filters/batcheing_a.png></img>
+<img src=bip-block-batch-filters/batching_a.png></img>
 
 On this picture you can see first part of unique addresses highlighted in blue. Duplicated elements below, have a distinctive feature. They form a separate set for encoding which a sufficiently high FPS is enough. At example SPV wallet tracking addresses {Q,V,C,E}. On block 1 we have positive test and download this block. On block we have no positive test on first part, then we check second part. In second part we have only duplicates from start of block range till recent block. So our task is get check is this duplicated element belong to our addresses {Q,V,C,E}. To solve this task we should compare set of  duplicates from recent block with set of our affected addresses from start of the range. Let estimate resanable count of possible affected addresses related to SPV wallet. On the assumption 2-3 payments daily we have about 42 affected addresses in a 2 weeks. Siutable parameters for GCS is <code>M = 45 P = 5</code>, this means that duplicated elements coded with small number of bits. As you can see on picture 4 bits per duplicate element and >20 bit per unique element.
 
