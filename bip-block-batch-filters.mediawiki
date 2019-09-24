@@ -127,89 +127,44 @@ Separation of filters by address type, allows lite client not to download redund
 
 == Specification ==
 
-For each block, filters are derived containing sets of addresses or scripts associated with the block. 
+For each block, filters are derived containing sets of addresses associated with the block. Filter is probabilistic structure which matches all items in the set with probability 1, and matches other items with probability 1/M for some integer parameter M. To construct this probabilistic structure used set of uniqe hashed elements where maximum bit length on of element defines false positive rate. To reduce size of filter used Golomb-Rice coding the same schema like in BIP 158 and called Golomb-coded set - GCS.
 
-At a high level, a batch filter is constructed from a set of <code>N</code> items by:
-* hashing all items to 64-bit integers in the range <code>[0, F)</code>
-* sorting the hashed values in ascending order and remove duplicates
-* apply Deltas coding - computing the differences between each value and the previous one
-* writing the differences sequentially to bit string with minimal bits required to encode each value
-* writing separate bit string with number of bits for corresponding value in first bitstring
-* compress second bit string with 2 round Huffman coding 
+At a high level, a GCS is constructed from a set of <code>N</code> items by:
+# hashing all items to 64-bit integers in the range <code>[0, N * M)</code>
+# sorting the hashed values in ascending order
+# computing the differences between each value and the previous one
+# writing the differences sequentially, compressed with Golomb-Rice coding
 
-==== Hashing data objects ====
 
-The first step in the filter construction is hashing the variable-sized raw items in the set to the range <code>[0, F)</code>, where <code> F = N * M</code>.  Currently about 560 millions unique addresses stored in bitcoin blockchain, reasonable values of <code> N, M </code>  defined in this BIP is <code> N = 10 000 </code> (count of unique addresses monitored by wallet), <code> M = 1 000 000 000 </code> (count of unique addresses in blockchain). This parameters may be increased in the future with the growth of the blockchain.
+The hashing shema is same as BIP 158 except SipHash function parameter.
 
-The items are first passed through the pseudorandom function SipHash, which takes a 128-bit key <code> k = 0 </code> and a variable-sized byte vector and produces a uniformly random 64-bit output. Implementations of this BIP MUST use the SipHash parameters <code>c = 2</code> and <code>d = 4</code> for best performance.
+==== Hashing Data Objects ====
 
-The 64-bit SipHash outputs are then mapped uniformly over the desired range by multiplying with <code>F</code> and taking the top 64 bits of the 128-bit result. This algorithm is a faster alternative to modulo reduction, as it avoids the expensive division operation, the same as in BIP 158. 
+Siphash function used in BIP 158 is effective function computes 64-bit or 128-bit values from a variable-length message and 128-bit secret key. For a 128-bit secret key, the first 128-bit of block hash is used. Consequently the same element but in different blocks has a different hashes. As a result of this we have to recalculate all hashes for monitoring elements for each block what adds unnecessary computing overhead. 
 
-==== Deltas coding ====
+SipHash is fundamentally different from cryptographic hash functions like SHA and main goal is a produce message authentication code: a keyed hash function like HMAC. To create a probabilistic filter structure, an effective hash function with good uniform distribution is needed. MAC functionality is out of block filters task scope. Using a constant value of 128-bit key allows using sighash as a regular hash function and opens up the opportunity for filters batching.
 
-Instead of writing the items in the hashed set directly to the filter, greater compression is achieved by only writing the differences between successive items in sorted order.
+128-bit key <code>k</code> should be set to 0 for all filters.
 
-==== Huffman coding ====
-
-Instead of encoding values into a sequence of bits with a prefix that allows decoding, we divide the data into 2 separate sequences.  First sequence with  element values written  as a string of bits using the minimum required number bits for each element. Second sequence with number of bits written in first sequence for each element, written as byte string. As result we got first sequence without redundancy and second one with a lot of duplicate values. 
-
-Huffman encoding is effective algorithm to encode duplicate values in sequence. 2 round of huffman encoding on second sequence give optimal result. To reduce size of compressed second sequence we will use minimal  bits threshold for writing values for first sequence. Count of bits to encode most of item values is in range 20 - 24, we apply 20 bit minimal threshold to reduce huffman coding dictionary, get more duplicates in second sequence and get better huffman compression result.
-
+Siphash parameters: <code>k = 0</code> <code>c = 2</code> and <code>d = 4<code>.
 
 
 == Block Batch Filters ==
 
-This BIP defines list of  filter types:
+This BIP defines list of  new filter types:
 
-* block 
-  P2PK+P2PKH  - 0x01, P2SH  - 0x02, P2WPKH  - 0x03, P2WPSH  - 0x04
-* batch level 1
-  P2PK+P2PKH  - 0x05, P2SH  - 0x06, P2WPKH  - 0x07, P2WPSH  - 0x08
-  size - 2 500 000 unique addresses + addresses till end of last block in ran
-* batch level 2
-  P2PK+P2PKH  - 0x09, P2SH  - 0x0A, P2WPKH  - 0x0B, P2WPSH  - 0x0C 
-  size - 10 000 000 unique addresses + addresses till end of last block in range
-
+* P2PK+P2PKH - 0x01
+* P2SH  - 0x02
+* P2WPKH  - 0x03
+* P2WPSH  - 0x04
 
 
 ==== Filters contents ====
 
 The block batch filters contain set off unique items  derived from hashes of standard script types (pubkey hashes, script hashes). This information is minimum sufficient for light wallet to sync blockchain. Output script can’t be recovered for P2PK addresses in case no information about public key. This means that watch only wallet, with imported P2PK addresses from base58 format, not able to reconstruct output script without downloading transactions where this script was seen first time. For this reason hashes are used instead of output scripts.
 
-Batching set of filter items for blocks effectively reduces filter size by removing duplicates. Separation of filters by address type, allows lite client not to download redundant information without compromising privacy. It will significantly reduce global bandwidth usage, because the most of wallets are processing one type of addresses.
+==== Batch first block filter ====
 
-To save space on full node and reduce traffic, sequential creation of batch filters block by block should be done by recording difference of elements.
-
-<img src=bip-block-batch-filters/batches1.png></img>
-
-On this image shown how duplicate elements E with 22 bits, stored in batches as difference from batch with higher level.
-
-Lite client sync schema (BIP 157):
-
-* send message getcfheaders for batch level 2 filters 
-* in case avalable filters
-** send message getcfilters and download all filters for level 2 batches
-** in case positive test
-*** send getcfheaders for batch level 2 and range of blocks within affected level 2 fiter
-*** send message getcfilters and download filters for level 1 batches
-*** detect affected blocks range
-*** send message getcfilters and download block filters
-*** detect affected blocks
-*** send message getdata and download affected blocks
-* send message getcfheaders for batch level 1 filters for rest blocks range not included in last level 2 filter
-* in case avalable filters
-** send message getcfilters and download all filters for level 1 batches
-** in case positive test 
-*** send message getcfilters and download block filters
-*** detect affected blocks
-*** send message getdata and download affected blocks
-* send message getcfilters and download block filters for blocks not included to last level 1 filter
-* in case positive test 
-** send message getdata and download affected blocks
-
-<img src=bip-block-batch-filters/batches2.png></img>
-
-Once higher level filter created, lower filters MUST move up all elements except duplicates.
 
 == Compatibility ==
 
