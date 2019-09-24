@@ -70,15 +70,21 @@ We get this opportunity using a flexible approach to false positive rate paramet
 * 0 - 400,000 blocks  128,802,764
 * 0 - 500,000 blocks  346,316,499
 
-To reduce filters size we should use adaptive and optimal parameters <code>C</code> - cumulitive count of unique blocks addresses until given block,  <code>P = floor(log2(C/1.497137))</code>, <code> M= 1.49713 * 2^P </code>.
+To reduce filters size we should use adaptive and optimal parameters <code>C</code> - cumulitive count of unique blocks addresses until given block,  <code>P = floor(log2(C / 1.497137))</code>, <code> M= 1.49713 * 2^P </code>.
 
+==== Commitment ====
+
+This is one of the useful properties that filters should meet, filter construction should use deterministic algorithm to give ability publish commitment for filter like witness commitment is in an OP_RETURN output of the coinbase transaction.
+By adding miners to the task, creating filters, checking content and making commitment, unlock the protection for spv nodes from concealing payments at the consensus level. Filters commitment is optional and could be added infuture soft fork.
 
 ==== Batching ====
 
 About 94% of all addresses recorded in bitcoin blockchain have zero balance at this moment, this means that at 
 least 2 records for 94% of addresses in blockchain. Each spent utxo have 1 creating and 1 spending records. The presence of duplicate elements is also due to a lot of addresses was reused.
 
-Combining filters for block ranges, gives one of the ability to reduce filters size.  
+Combining filters for ranges of blocks gives another opportunity to reduce the size of filters. Вivide the filter elemnts into 2 types. First one is uniqe elements within range of <code>Q</code> blocks and second is duplicated element in selected block range.
+
+
 
 Block combined filters with set of elements about 5 000 000 pieces per batch reduce total filters size to 2.3 Gb.
 
