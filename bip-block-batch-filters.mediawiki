@@ -166,7 +166,7 @@ Comparsion BIP 158 and different block ranges bacthes :
 
 ==== Separation of filters by address type ====
 
-Separation of filters by address type, allows lite client not to download redundant information without compromising privacy. It will significantly reduce global bandwidth usage, because the most of wallets are processing one type of addresses.
+Separation of filters by address type, allows light client not to download redundant information without compromising privacy. It will significantly reduce global bandwidth usage, because the most of wallets are processing one type of addresses.
 
 
 == Specification ==
