@@ -82,7 +82,7 @@ By adding miners to the task, creating filters, checking content and making comm
 About 94% of all addresses recorded in bitcoin blockchain have zero balance at this moment, this means that at 
 least 2 records for 94% of addresses in blockchain. Each spent utxo have 1 creating and 1 spending records. The presence of duplicate elements is also due to a lot of addresses was reused.
 
-Combining filters for ranges of blocks gives another opportunity to reduce the size of filters. Divide the filter elemnts into 2 part. First one is uniqe elements within range of <code>Q</code> blocks and second is duplicated element in selected block range. 
+Combining filters for ranges of blocks gives another opportunity to reduce the size of filters. Divide the filter elements into 2 parts. First one is uniqe elements within range of <code>Q</code> blocks and second part is duplicated element in selected block range. 
 
 <img src=bip-block-batch-filters/batching_a.png></img>
 
