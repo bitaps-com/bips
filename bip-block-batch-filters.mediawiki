@@ -166,9 +166,9 @@ The block batch filters contain set off unique items  derived from hashes of sta
 ==== Filter structure ====
 
 {|
-! Field Name !! Type !! Size !! Encoding || Purpose
+! Field Name !! Type !! Size  || Purpose
 |-
-| blockhash || Binary blob || 32 bytes || The output from a double-SHA256 of the block header, as used elsewhere || The blockhash of the block which the transactions being provided are in
+| Batch heades || Binary blob || variable  || Only in first block filter in range of batch 
 |-
 | transactions_length || [[Protocol_documentation#Variable_length_integer|CompactSize]] || 1 or 3 bytes || As used to encode array lengths elsewhere || The number of transactions provided
 |-
