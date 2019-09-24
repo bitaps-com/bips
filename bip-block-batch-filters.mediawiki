@@ -92,26 +92,27 @@ Let estimate resanable count of possible affected addresses within batch related
 
 Comparsion BIP 158 and different block ranges :
 
-  Blocks 144*7 = 1008  (450,000->45,108)
+  Blocks 144 * 7 = 1008  [450,000 -> 451,008)
   BIP158 size  = 17 Mb
-  1008 blocks batch size = 14.7 Mb (unique - 12.27 Mb; duplicates - 2.32 Mb)
-  <code>GCS parameteres:  M = 803769360; P = 29;</code>
-  space saving - 13.5 %
+  1008 blocks batch size = 14.23 Mb (unique - 11.87 Mb; duplicates - 2.32 Mb)
+  GCS parameteres:  M = 401882775; P = 28;
+  space saving - 16.2 %
 
+  Blocks 144 * 14 = 2016  [450,000 -> 452,016)
+  BIP158 size  = 34 M
+  2016 blocks batch size = 28.25 Mb (unique - 22.35 Mb; duplicates - 5.83 Mb)
+  GCS parameteres:  M = 401882775; P = 28;
+  space saving - 16.9 %
+
+  Blocks 144 * 21 = 3024  [450,000 -> 453,024)
+  BIP158 size  = 51 M
+  3024 blocks batch size = 41.23 Mb (unique - 31.38 Mb; duplicates - 9.76 Mb)
+  GCS parameteres:  M = 401882775; P = 28;
+  space saving - 19.1 %
 
 
 
 ---
-
-
-
-Block combined filters with set of elements about 5 000 000 pieces per batch reduce total filters size to 2.3 Gb.
-
-Block combined  filters with set of elements about 20 000 000 pieces per batch reduce total filters size to 1.6 Gb.
-
-The increase set elements limit in batch  more then 20 000 000 pieces no longer gives a tangible effect. 
-
-Reducing downloadable total filter size to 1.6 Gb is obviously good improvement for light clients and bitcoin scalability.
 
 
 
