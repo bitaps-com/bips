@@ -11,7 +11,7 @@
   License: CC0-1.0
 </pre>
 
-== Work in progress and open question ==
+== Work in progress and open questions ==
 
 ==== Optimal range for batch?  ====
 
