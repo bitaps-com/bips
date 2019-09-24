@@ -189,13 +189,16 @@ The first filters batch started from Genesis block and have initial value for <c
 
 <code>M = ceil(1.49713 * 2^P) </code>
 
+== Lite client filter processing schema ==
+
+work in progress ...
+
 == Compatibility ==
 
 This block batch filter construction is not incompatible with existing software, though it requires implementation of the new filters.
 
 == Reference Implementation ==
-
-Delta-Huffman coding: https://github.com/bitaps-com/pybtc/blob/bugfix/pybtc/functions/filters.py#L172
+...
 
 == Copyright ==
 
