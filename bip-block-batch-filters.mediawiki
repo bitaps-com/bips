@@ -168,7 +168,7 @@ The block batch filters contain set off unique items  derived from hashes of sta
 {|
 ! Field Name !! Type !! Size  || Purpose
 |-
-| Batch header || Binary blob || 0 or variable  || Exist only in first block filter in range of batch 
+| BatchHeader || Binary blob || 0 or variable  || Exist only in first block filter in range of batch 
 |-
 | UniqItemsCount || CompactSize || 1 - 5 bytes || Count of filter unique elements
 |-
