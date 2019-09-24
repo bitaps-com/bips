@@ -113,37 +113,16 @@ Comparsion BIP 158 and different block ranges bacthes :
   space saving - 19.1 %
 
 
+  Blocks 144 * 28 = 4032  [450,000 -> 454,032)
+  BIP158 size  = 69 M
+  4032 blocks batch size = 54.85 Mb (unique - 40.67 Mb; duplicates - 14.05 Mb)
+  GCS parameteres:  M = 401882775; P = 28;
+  space saving - 20.5 %
+  
+  
+==== Separation of filters by address type ====
 
----
-
-
-
-BIP 158 use siphash as hash function to produce set of filter elements. Siphash is effective function computes 64-bit 
-or 128-bit values from a variable-length message and 128-bit secret key. For a 128-bit secret key, the first 128-bit of 
-block hash is used. Consequently the same element but in different blocks has a different hashes. As a result of this
-we have to recalculate all hashes for monitoring elements for each block and we can’t aggregate block filters sets  to batch. 
-
-SipHash is fundamentally different from cryptographic hash functions like SHA and main goal is a produce message 
-authentication code: a keyed hash function like HMAC. To create a probabilistic filter structure, an effective hash 
-function with good uniform distribution is needed. MAC functionality is out of block filters task scope. Using a constant
-value of 128-bit key allows using sighash as a regular hash function and opens up the opportunity for filters batching.
-
-The 64-bit SipHash outputs are then mapped uniformly over the desired range by multiplying with F and taking the top 
-64 bits of the 128-bit result. Where F = N * M, N - count of filter elements, M - inverse of  probability for set of 
-elements matches other items.  This algorithm is a faster alternative to modulo reduction, as it avoids the expensive 
-division operation. In other words, 64-bit SipHash outputs are mapped to values with a given number of bits 
-to achieve a given false positive rate. To archive shotter filter size with Golomb-Rice coding N should be 
-exactly match the count of elements in filter. This means that filters with fewer elements cut out more bits from hashes 
-than filters with more elements. As a result, we cannot do batching for filters due to the lack of reduced bits and 
-still have to recalculate all hashes for wallet monitoring elements for each block.
-
-In case we use static parameters for Golomb-Rice coding F, with necessary bits and false positive rate for all blocks 
-independently from block filter elements count. Redundancy size grows significantly for the filters with the count 
-of elements moving away from the maximum count.
-
-In this BIP describes alternative filter coding algorithm based on combination of Deltas coding and double Huffman coding, 
-which allows to minimize the size redundancy for filters with a small number of elements and approaches the compression up
-to 98,3 % from optimal,  for filters with an average and a large number of elements.
+ Separation of filters by address type, allows lite client not to download redundant information without compromising privacy. It will significantly reduce global bandwidth usage, because the most of wallets are processing one type of addresses.
 
 
 == Specification ==
@@ -176,175 +155,7 @@ Instead of encoding values into a sequence of bits with a prefix that allows dec
 
 Huffman encoding is effective algorithm to encode duplicate values in sequence. 2 round of huffman encoding on second sequence give optimal result. To reduce size of compressed second sequence we will use minimal  bits threshold for writing values for first sequence. Count of bits to encode most of item values is in range 20 - 24, we apply 20 bit minimal threshold to reduce huffman coding dictionary, get more duplicates in second sequence and get better huffman compression result.
 
-<pre>
-def encode_dhcs(elements, min_bits_threshold=20):
-   # Delta-Hoffman coded set
-   data_sequence = bitarray()
-   data_sequence_append = data_sequence.append
 
-   deltas_bits = deque()
-   deltas_bits_map_freq = dict()
-   last = 0
-
-   for value in  sorted(elements):
-       delta =  value - last
-
-       bits = delta.bit_length()
-       if bits < min_bits_threshold:
-           bits =  min_bits_threshold
-
-       deltas_bits.append(bits)
-
-       try:
-           deltas_bits_map_freq[bits] += 1
-       except:
-           deltas_bits_map_freq[bits] = 1
-
-       while bits > 0:
-           data_sequence_append(delta & (1 << (bits - 1)))
-           bits -= 1
-       last = value
-
-   # huffman encode round 1
-   # encode bits length sequence to byte string
-   codes_round_1 = huffman_code(huffman_tree(deltas_bits_map_freq))
-   r = bitarray()
-   r.encode(codes_round_1, deltas_bits)
-   bits_sequence = r.tobytes()
-   bits_sequnce_len_round_1 = r.length()
-
-   # huffman encode round 2
-   # encode byte string
-   deltas_bits = deque()
-   deltas_bits_map_freq = dict()
-   for i in bits_sequence:
-       b = i >> 4
-       c = i & 0b1111
-       deltas_bits.append(b)
-       try:
-           deltas_bits_map_freq[b] += 1
-       except:
-           deltas_bits_map_freq[b] = 1
-
-       deltas_bits.append(c)
-       try:
-           deltas_bits_map_freq[c] += 1
-       except:
-           deltas_bits_map_freq[c] = 1
-
-   codes_round_2 = huffman_code(huffman_tree(deltas_bits_map_freq))
-   r = bitarray()
-   r.encode(codes_round_2, deltas_bits)
-   bits_sequnce_len_round_2 = r.length()
-   bits_sequence = r.tobytes()
-
-
-   code_table_1 = int_to_var_int(len(codes_round_1))
-   for code in codes_round_1:
-       code_table_1 += int_to_var_int(code)
-       code_table_1 += int_to_var_int(codes_round_1[code].length())
-       code_table_1 += b"".join([bytes([i]) for i in codes_round_1[code].tolist()])
-
-   code_table_2 = int_to_var_int(len(codes_round_2))
-   for code in codes_round_2:
-       code_table_2 += int_to_var_int(code)
-       code_table_2 += int_to_var_int(codes_round_2[code].length())
-       code_table_2 += b"".join([bytes([i]) for i in codes_round_2[code].tolist()])
-
-
-   d_filter_len = data_sequence.length()
-   d_filter_string = data_sequence.tobytes()
-
-   return  b"".join((code_table_1,
-                     code_table_2,
-                     int_to_var_int(bits_sequnce_len_round_1),
-                     int_to_var_int(bits_sequnce_len_round_2),
-                     bits_sequence,
-                     int_to_var_int(d_filter_len),
-                     d_filter_string))
-
-</pre>
-
-<pre>
-def decode_dhcs(h):
-   # Delta-Hoffman coded set
-   stream = get_stream(h)
-
-   # read code_table_1
-   c = var_int_to_int(read_var_int(stream))
-   code_table_1 = dict()
-   for i in range(c):
-       key = var_int_to_int(read_var_int(stream))
-       l = var_int_to_int(read_var_int(stream))
-       code =  bitarray([bool(k) for k in stream.read(l)])
-       code_table_1[key] = code
-
-   # read code_table_2
-   c = var_int_to_int(read_var_int(stream))
-   code_table_2 = dict()
-   for i in range(c):
-       key = var_int_to_int(read_var_int(stream))
-       l = var_int_to_int(read_var_int(stream))
-       code =  bitarray([bool(k) for k in stream.read(l)])
-       code_table_2[key] = code
-
-   # read compressed deltas
-   deltas_bits_len_1 = var_int_to_int(read_var_int(stream))
-   deltas_bits_len_2 = var_int_to_int(read_var_int(stream))
-   deltas_byte_len = deltas_bits_len_2 // 8 + int(bool(deltas_bits_len_2 % 8))
-
-   r = stream.read(deltas_byte_len)
-   deltas = bitarray()
-   deltas.frombytes(r)
-
-   while deltas.length() > deltas_bits_len_2:
-       deltas.pop()
-
-   # Huffman decode round 1
-   r = deltas.decode(code_table_2)
-   deltas_string = bytearray()
-   for i in range(int(len(r)/2)):
-       deltas_string += bytes([(r[i*2] << 4) + r[i*2 + 1]])
-
-   # Huffman decode round 2
-   r = bitarray()
-   r.frombytes(bytes(deltas_string))
-
-   while r.length() > deltas_bits_len_1:
-       r.pop()
-
-   deltas_bits = r.decode(code_table_1)
-
-
-   d_filter_bit_len = var_int_to_int(read_var_int(stream))
-   d_filter_byte_len = d_filter_bit_len // 8 + int(bool(d_filter_bit_len % 8))
-   r = stream.read(d_filter_byte_len)
-
-   d_filter = bitarray()
-   d_filter.frombytes(r)
-
-   while d_filter.length() > d_filter_bit_len:
-       d_filter.pop()
-
-   f = 0
-   f_max = d_filter.length()
-   decoded_set = set()
-   last = 0
-
-   for bits in deltas_bits:
-       d = 0
-       while bits  > 0 and f < f_max :
-           bits -= 1
-           d = d << 1
-           if d_filter[f]:
-               d += 1
-           f += 1
-       last += d
-       decoded_set.add(last)
-      
-   return decoded_set
-
-</pre>
 
 == Block Batch Filters ==
 
