@@ -168,7 +168,7 @@ The block batch filters contain set off unique items  derived from hashes of sta
 {|
 ! Field Name !! Type !! Size  || Purpose
 |-
-| batch_header || Binary blob || 0 or variable  || Exist only in first block filter in range of batch 
+| cumulitive_address_count || CompactSize || 1 - 5 bytes  || Value exist only in first block filter in range of batch representing sum of all unique elements in previous batches. Genesis block filter hasinitial value 10,000
 |-
 | unique_items_count || CompactSize || 1 - 5 bytes || Count of filter unique elements
 |-
