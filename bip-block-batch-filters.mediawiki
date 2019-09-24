@@ -172,7 +172,7 @@ The block batch filters contain set off unique items  derived from hashes of sta
 |-
 | unique_items_count || CompactSize || 1 - 5 bytes || Count of filter unique elements
 |-
-| number_uniq_set_bytes || Binary blob || variable || A variable length integer representing the size of the GCS with uniqie elements
+| number_unique_set_bytes || Binary blob || variable || A variable length integer representing the size of the GCS with uniqie elements
 |-
 | unique_set || Binary blob || variable || GCS with unique  elements
 |-
