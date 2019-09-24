@@ -10,12 +10,56 @@
   Created: 2019-09-20
   License: CC0-1.0
 </pre>
-== Work in progress ==
 
-==== To do ====
-* if use filter elements as addreess or script hashes test diffirence if we exclude siphash and just get first 64 bit of already calculated hashes
-* determine the optimal range for batch 
+== Work in progress and open question ==
 
+==== Optimal range for batch?  ====
+
+Determine optimal range for batch
+
+  Blocks 144 * 7 = 1008  [450,000 -> 451,008)
+  BIP158 size  = 17 Mb
+  1008 blocks batch size = 14.23 Mb (unique - 11.87 Mb; duplicates - 2.32 Mb)
+  GCS parameteres:  M = 401882775; P = 28;
+  space saving - 16.2 %
+
+  Blocks 144 * 14 = 2016  [450,000 -> 452,016)
+  BIP158 size  = 34 M
+  2016 blocks batch size = 28.25 Mb (unique - 22.35 Mb; duplicates - 5.83 Mb)
+  GCS parameteres:  M = 401882775; P = 28;
+  space saving - 16.9 %
+
+  Blocks 144 * 21 = 3024  [450,000 -> 453,024)
+  BIP158 size  = 51 M
+  3024 blocks batch size = 41.23 Mb (unique - 31.38 Mb; duplicates - 9.76 Mb)
+  GCS parameteres:  M = 401882775; P = 28;
+  space saving - 19.1 %
+
+
+  Blocks 144 * 28 = 4032  [450,000 -> 454,032)
+  BIP158 size  = 69 M
+  4032 blocks batch size = 54.85 Mb (unique - 40.67 Mb; duplicates - 14.05 Mb)
+  GCS parameteres:  M = 401882775; P = 28;
+  space saving - 20.5 %
+
+
+
+==== Why we need siphash?  ====
+Why we need siphash and not just use first 64 bits from addreess or script hashes ?
+
+todo: test diffirence if we exclude siphash and just get first 64 bit of already calculated hashes
+
+==== filter types for partial information download? ====
+
+Downloading in first step only unique elements from filters and download duplicate elements only if recent range have positive tests this will reduce bandwith consumption.
+How reasonable is it to apply?
+
+
+==== Tests ====
+Todo:finish testing and determine exactly size for each filter type for mainnet.
+
+
+------------------------------------
   
 
 == Abstract ==
