@@ -118,8 +118,8 @@ Comparsion BIP 158 and different block ranges bacthes :
   4032 blocks batch size = 54.85 Mb (unique - 40.67 Mb; duplicates - 14.05 Mb)
   GCS parameteres:  M = 401882775; P = 28;
   space saving - 20.5 %
-  
-  
+
+
 ==== Separation of filters by address type ====
 
  Separation of filters by address type, allows lite client not to download redundant information without compromising privacy. It will significantly reduce global bandwidth usage, because the most of wallets are processing one type of addresses.
