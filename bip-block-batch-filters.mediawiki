@@ -170,13 +170,17 @@ The block batch filters contain set off unique items  derived from hashes of sta
 |-
 | Batch header || Binary blob || 0 or variable  || Exist only in first block filter in range of batch 
 |-
-| Elements count || CompactSize || 1 or 3 bytes || Count of filter unique elements
+| UniqItemsCount || CompactSize || 1 or 5 bytes || Count of filter unique elements
 |-
-| Unique set || Binary blob || variable || GCS with unique  elements
+| NumUniqSetBytes || Binary blob || variable || A variable length integer representing the size of the GCS with uniqie elements
 |-
-| Elements count || CompactSize || 1 or 3 bytes || Count of filter duplicate elements
+| UniqueSet || Binary blob || variable || GCS with unique  elements
 |-
-| Duplicate set || Binary blob || variable || GCS with duplicate elements
+| DupItemsCount || CompactSize || 1 or 3 bytes || Count of filter duplicate elements
+|-
+| NumDupSetBytes || CompactSize || 1 or 3 bytes || Count of filter duplicate elements
+|-
+| DupSet || Binary blob || variable || A variable length integer representing the size of the GCS with  duplicate elements
 |}
 
 
