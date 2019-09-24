@@ -178,9 +178,9 @@ The block batch filters contain set off unique items  derived from hashes of sta
 |-
 | DupItemsCount || CompactSize || 1 - 5 bytes || Count of filter duplicate elements
 |-
-| NumDupSetBytes || CompactSize || 1 - 5 bytes || Count of filter duplicate elements
+| NumDupSetBytes || CompactSize || 1 - 5 bytes || A variable length integer representing the size of the GCS with  duplicate elements
 |-
-| DupSet || Binary blob || variable || A variable length integer representing the size of the GCS with  duplicate elements
+| DupSet || Binary blob || variable || GCS with  duplicate elements
 |}
 
 
