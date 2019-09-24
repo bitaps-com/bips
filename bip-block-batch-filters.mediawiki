@@ -70,7 +70,7 @@ We get this opportunity using a flexible approach to false positive rate paramet
 * 0 - 400,000 blocks  128,802,764
 * 0 - 500,000 blocks  346,316,499
 
-To reduce filters size we should use adaptive and optimal parameters <code>C</code> - cumulitive count of unique blocks addresses until given block,  <code>P=floor(log2(C/1.497137))</code>, <code>M=1.49713 * 2 </code><sup>P</sup>.
+To reduce filters size we should use adaptive and optimal parameters <code>C</code> - cumulitive count of unique blocks addresses until given block,  <code>P = floor(log2(C/1.497137))</code>, <code> M= 1.49713 * 2^P </code>.
 
 
 ==== Batching ====
