@@ -59,18 +59,26 @@ Filters size:  57.64 Mb
 
 Bandwidth consumption reduced about 16%.
 
-==== Total filters size and filters batching ====
+==== Total filters size and adaptive FPS rate ====
 
-Total filters size for BIP 158 is about 4.3 Gb ( 596,200 blocks). To achieve a smaller filters size, should take a more flexible approach.
+Total filters size for BIP 158 is about 4.3 Gb ( 596,200 blocks). To achieve a smaller filters size, should take a more flexible approach. Use of optimal and flexible parameters for false positive rate the key of success.
+
+We get this opportunity using a flexible approach to false positive rate parameters in accordance with the count of addresses in  blockchain. Currently about 560 millions unique addresses stored in bitcoin blockchain and this value grows with each block. To get expected false positive rate we should use <code>M=560,000,000</code>  as parameter used in BIP 158. Unique addresses count in blockchain:
+* 0 - 100,000 blocks  174,718
+* 0 - 200,000 blocks  6,577,160
+* 0 - 300,000 blocks  35,535,921
+* 0 - 400,000 blocks  128,802,764
+* 0 - 500,000 blocks  346,316,499
+
+To reduce filters size we should use adaptive and optimal parameters <code>C</code> - cumulitive count of unique blocks addresses until given block,  <code>P=floor(log2(C/1.497137))</code>, <code>M=1.49713 * 2 <sup>P</sup></code>.
 
 
+==== Batching ====
 
-To achieve best level of privacy and security wallets must follow the rule “no address reuse”,
-but despite the recommendations “no address reuse”, a lot of addresses was reused and will be reused in future. 
 About 94% of all addresses recorded in bitcoin blockchain have zero balance at this moment, this means that at 
-least 2 records for 94% of addresses in blockchain. Each spent utxo have 1 creating and 1 spending records.  
-Combining filters for block ranges, excludes all reused and spent records as duplicates in a filter within 
-the range of combined blocks.
+least 2 records for 94% of addresses in blockchain. Each spent utxo have 1 creating and 1 spending records. The presence of duplicate elements is also due to a lot of addresses was reused.
+
+Combining filters for block ranges, gives one of the ability to reduce filters size.  
 
 Block combined filters with set of elements about 5 000 000 pieces per batch reduce total filters size to 2.3 Gb.
 
@@ -81,7 +89,6 @@ The increase set elements limit in batch  more then 20 000 000 pieces no longer 
 Reducing downloadable total filter size to 1.6 Gb is obviously good improvement for light clients and bitcoin scalability.
 
 
-==== Batching and BIP 158 ====
 
 BIP 158 use siphash as hash function to produce set of filter elements. Siphash is effective function computes 64-bit 
 or 128-bit values from a variable-length message and 128-bit secret key. For a 128-bit secret key, the first 128-bit of 
