@@ -92,7 +92,7 @@ For example, an SPV wallet keeps track set of addresses {Q,V,C,E}. On block 1 we
 
 Let estimate resanable count of possible affected addresses for SPV wallet within batch. On the assumption 2-3 payments daily we have about 42 affected addresses in a 2 weeks or 2016 blocks range. Siutable parameters for GCS is <code>M = 45 P = 5</code>, this means that duplicated elements coded with small number of bits. As you can see on picture, 4 bits per duplicate element and 20-22 bits per unique element.
 
-Comparsion BIP 158 and different block ranges :
+Comparsion BIP 158 and different block ranges bacthes :
 
   Blocks 144 * 7 = 1008  [450,000 -> 451,008)
   BIP158 size  = 17 Mb
