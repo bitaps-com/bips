@@ -250,7 +250,11 @@ work in progress ...
 This block batch filter construction is not incompatible with existing software, though it requires implementation of the new filters.
 
 == Reference Implementation ==
-...
+TODO
+
+== References ==
+
+<references/>
 
 == Copyright ==
 
