@@ -182,24 +182,24 @@ This BIP defines list of  new filter types:
 
 Full filters:
 
-* P2PK+P2PKH - 0x01
-* P2SH  - 0x02
-* P2WPKH  - 0x03
-* P2WPSH  - 0x04
+* <code>P2PK+P2PKH - 0x01</code>
+* <code>P2SH  - 0x02</code>
+* <code>P2WPKH  - 0x03</code>
+* <code>P2WPSH  - 0x04</code>
 
 Only unique addresses part:
 
-* P2PK+P2PKH - 0x05
-* P2SH  - 0x06
-* P2WPKH  - 0x07
-* P2WPSH  - 0x08
+* <code>P2PK+P2PKH - 0x05</code>
+* <code>P2SH  - 0x06</code>
+* <code>P2WPKH  - 0x07</code>
+* <code>P2WPSH  - 0x08</code>
 
 Only duplicated addresses part:
 
-* P2PK+P2PKH - 0x09
-* P2SH  - 0x0A
-* P2WPKH  - 0x0B
-* P2WPSH  - 0x0C
+* <code>P2PK+P2PKH - 0x09</code>
+* <code>P2SH  - 0x0A</code>
+* <code>P2WPKH  - 0x0B</code>
+* <code>P2WPSH  - 0x0C</code>
 
 ==== Filters contents ====
 
