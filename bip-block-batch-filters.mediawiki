@@ -237,7 +237,7 @@ A commitment is an important part of block filters for future consensus layer up
 
 <img src=bip-block-batch-filters/commitment.png></img>
 
-Block filters commitment hash is merkle root or merkle tree structure, where tree leafs if hashes from GCS filters parts linked with previous commitment hash. Linking to previous commitment hash unlock ability to download filters headers for 
+Block filters commitment hash is merkle root or merkle tree structure, where tree leafs if hashes from GCS filters parts linked with previous commitment hash. Linking to previous block GCS filters hash  unlock ability to download filter headers and one commitment to verify batch of headers. 
 
 == Light client filter processing schema ==
 
