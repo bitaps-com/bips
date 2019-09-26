@@ -256,7 +256,7 @@ Block filters commitment hash is merkle root of merkle tree structure, where tre
 
 == Light client filter processing schema ==
 
-work in progress ...
+TODO
 
 == Compatibility ==
 
