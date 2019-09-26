@@ -70,24 +70,24 @@ instead of download full blocks.
 ! Byte Size
 ! Description
 |-
-| FilterType
+| filter_type
 | byte
 | 1
 | Byte identifying the type of filter being returned
 |-
-| BlockHash
+| tx_id hash
 | [32]byte
 | 32
-| Block hash of the Bitcoin block for which the filter is being returned
+| Transaction id hash for which the filter is being returned
 |-
-| NumFilterBytes
+| num_filter_bytes
 | CompactSize
 | 1-5
 | A variable length integer representing the size of the filter in the following field
 |-
-| FilterBytes
+| filter
 | []byte
-| NumFilterBytes
+| num_filter_bytes
 | The serialized compact filter for this block
 |}
 
