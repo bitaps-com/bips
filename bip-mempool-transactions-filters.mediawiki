@@ -75,7 +75,7 @@ instead of download full blocks.
 | 1
 | Byte identifying the type of filter being returned
 |-
-| tx_id hash
+| tx_id
 | [32]byte
 | 32
 | Transaction id hash for which the filter is being returned
