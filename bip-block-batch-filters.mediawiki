@@ -54,7 +54,7 @@ The filter construction proposed is an alternative to BIP 158 filters, with lowe
 
 Block filters designed to help light clients analize block contents without downloading full blocks and minimize the expected bandwidth consumed. The main difference from BIP 37 approach is no privacy leakage. BIP 158 defines initial filter type <code>basic</code>. This BIP proposed more effective and flexible alternative
 
-Fisrt off all lets determine reasanable number of addresses tracked by a light client in most common case.
+Fisrt of all lets determine reasanable number of addresses tracked by a light client in most common case.
 
 To achieve privacy and security, wallets must follow the rule - no address reuse. This means that each payment
 received or sent uses one or more new addresses. The wallet makes 2-3 payments per day, during the year the number 
@@ -203,7 +203,7 @@ Only duplicated addresses part:
 
 ==== Filters contents ====
 
-The block batch filters contain set off unique items  derived from hashes of standard script types (pubkey hashes, script hashes). This information is minimum sufficient for light wallet to sync blockchain. Output script can’t be recovered for P2PK addresses in case no information about public key. This means that watch only wallet, with imported P2PK addresses from base58 format, not able to reconstruct output script without downloading transactions where this script was seen first time. For this reason hashes are used instead of output scripts.
+The block batch filters contain set of unique items  derived from hashes of standard script types (pubkey hashes, script hashes). This information is minimum sufficient for light wallet to sync blockchain. Output script can’t be recovered for P2PK addresses in case no information about public key. This means that watch only wallet, with imported P2PK addresses from base58 format, not able to reconstruct output script without downloading transactions where this script was seen first time. For this reason hashes are used instead of output scripts.
 
 ==== Filter structure ====
 
