@@ -231,6 +231,8 @@ The first filters batch started from Genesis block and have initial value for <c
 
 <code>M = ceil(1.49713 * 2^P) </code>
 
+This parameters is close to optimal<ref>https://gist.github.com/sipa/576d5f09c3b86c3b1b75598d799fc845</ref>.
+
 ==== Commitment structure ====
 
 A commitment is an important part of block filters for future consensus layer update, that provides protection against payment hiding for light clients. Without commitment light clients rely on the fact that most of the nodes in the network do not hide payments. Tha same asumption was in BIP37. Adding block filters commitment to coinbase transaction, as the block validation rule will improve the lightweight client protocol by moving from trust to validation. 
