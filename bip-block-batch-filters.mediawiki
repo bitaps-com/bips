@@ -17,23 +17,11 @@
 
 Determine optimal range for batch
 
-  Blocks 144 * 7 = 1008  [450,000 -> 451,008)
-  BIP158 size  = 17 Mb
-  1008 blocks batch size = 14.23 Mb (unique - 11.87 Mb; duplicates - 2.32 Mb)
-  GCS parameteres:  M = 401882775; P = 28;
-  space saving - 16.2 %
-
   Blocks 144 * 14 = 2016  [450,000 -> 452,016)
   BIP158 size  = 34 M
   2016 blocks batch size = 28.25 Mb (unique - 22.35 Mb; duplicates - 5.83 Mb)
   GCS parameteres:  M = 401882775; P = 28;
   space saving - 16.9 %
-
-  Blocks 144 * 21 = 3024  [450,000 -> 453,024)
-  BIP158 size  = 51 M
-  3024 blocks batch size = 41.23 Mb (unique - 31.38 Mb; duplicates - 9.76 Mb)
-  GCS parameteres:  M = 401882775; P = 28;
-  space saving - 19.1 %
 
 
   Blocks 144 * 28 = 4032  [450,000 -> 454,032)
@@ -48,11 +36,6 @@ Determine optimal range for batch
 Why we need siphash and not just use first 64 bits from addreess or script hashes ?
 
 todo: test diffirence if we exclude siphash and just get first 64 bit of already calculated hashes
-
-==== filter types for partial information download? ====
-
-Downloading in first step only unique elements from filters and download duplicate elements only if recent range have positive tests this will reduce bandwith consumption.
-How reasonable is it to apply?
 
 
 ==== Tests ====
@@ -197,11 +180,26 @@ Siphash parameters: <code>k = 0</code> <code>c = 2</code> and <code>d = 4</code>
 
 This BIP defines list of  new filter types:
 
+Full filters:
+
 * P2PK+P2PKH - 0x01
 * P2SH  - 0x02
 * P2WPKH  - 0x03
 * P2WPSH  - 0x04
 
+Only unique addresses part:
+
+* P2PK+P2PKH - 0x01
+* P2SH  - 0x02
+* P2WPKH  - 0x03
+* P2WPSH  - 0x04
+
+Only duplicated addresses part:
+
+* P2PK+P2PKH - 0x01
+* P2SH  - 0x02
+* P2WPKH  - 0x03
+* P2WPSH  - 0x04
 
 ==== Filters contents ====
 
@@ -232,6 +230,12 @@ The first filters batch started from Genesis block and have initial value for <c
 <code>P = floor(log2( cumulitive_address_count / 1.497137)) </code>
 
 <code>M = ceil(1.49713 * 2^P) </code>
+
+==== Commitment structure ====
+
+A commitment is an important part of block filters for future consensus layer update, that provides protection against payment hiding for light clients. Without commitment light clients rely on the fact that most of the nodes in the network do not hide payments. Tha same asumption was in BIP37. Adding block filters commitment to coinbase transaction, as the block validation rule will improve the lightweight client protocol by moving from trust to validation. 
+
+<img src=bip-block-batch-filters/commitment.png></img>
 
 == Light client filter processing schema ==
 
