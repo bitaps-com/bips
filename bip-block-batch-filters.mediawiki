@@ -239,7 +239,7 @@ A commitment is an important part of block filters for future consensus layer up
 
 <img src=bip-block-batch-filters/commitment.png></img>
 
-Block filters commitment hash is merkle root of merkle tree structure, where tree leafs is GCS filter hashes linked with previous block GCS filters hash. Linking to previous block hash unlock ability to download filter headers and one commitment from last block to verify all headers. In case we download commitments for each block, we get a lot of overhead because get a block a commitment means that we need to load the coinbase transaction and all block transaction hashes to make sure the coinbase transaction matches the root merkle.
+Block filters commitment hash is merkle root of merkle tree structure, where tree leafs is GCS filter hashes linked with previous block GCS filter hashes. Linking to previous block hashes unlock ability to download batch of filter headers and one commitment from last block to verify all. In case we download commitments for each block, we get a lot of overhead because get a block a commitment means that we need to load the coinbase transaction and all block transaction hashes to make sure the coinbase transaction matches the root merkle.
 
 == Light client filter processing schema ==
 
