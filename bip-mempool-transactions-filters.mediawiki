@@ -83,7 +83,7 @@ ID length filed define length of transaction ID in bytes for compatability with 
 |-
 | 1-5 || Elements count || var_int || Number of transaction IDs entries
 |-
-| variable  || transaction ID || List of []byte || List of transaction IDs 
+| variable  || transaction ID || List of byte[] || List of transaction IDs 
 |}
 
 
