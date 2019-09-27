@@ -64,38 +64,45 @@ instead of download full blocks.
 
 == Specification ==
 
-{| class="wikitable"
-! Field Name
-! Data Type
-! Byte Size
-! Description
+=== New messages ===
+
+
+==== gettxfilters ====
+
+The gettxfilter message is used to request transactions by 256-bit transaction IDs with the specified filters to apply. 
+ID length filed define length of transaction ID in bytes for compatability with future protocol changes and optiomizations at example for use 128-bit truncated IDs.
+
+{|class="wikitable"
+! Field Size !! Description !! Data type !! Comments
 |-
-| filter_type
-| byte
-| 1
-| Byte identifying the type of filter being returned
+| 1 || ID length || uint8_t || Transaction ID length in bytes
 |-
-| tx_id
-| [32]byte
-| 32
-| Transaction id hash for which the filter is being returned
+| 1-5 || Elements count || var_int || Number of applied filters
 |-
-| num_filter_bytes
-| CompactSize
-| 1-5
-| A variable length integer representing the size of the filter in the following field
+| variable  || filter type || List of var_int || List of of applied filter types
 |-
-| filter
-| []byte
-| num_filter_bytes
-| The serialized compact filter for this block
+| 1-5 || Elements count || var_int || Number of transaction IDs entries
+|-
+| variable  || transaction ID || List of []byte || List of transaction IDs 
 |}
 
-=== Filter Types ===
 
-For future extensibility, there are multiple ''filter types'' that determine which data is included in a transaction
-filter as well as the method of filter construction/querying. In this model,
-full nodes generate one filter per block per filter type supported.
+==== txfilter ====
+
+txfilter is sent in response to gettxfilters, one for each transaction in the requested list. The message contains the following fields:
+
+{|class="wikitable"
+! Field Size !! Description !! Data type !! Comments
+|-
+| 32 || transaction ID || byte[32] || Full transaction ID 
+|-
+| 1-5 || filter size || var_int || Filter length in bytes
+|-
+| variable  || filter || byte[] || GCS filter
+|}
+
+Filter types defined in BIP-block-batch-filters and determine which data is included in a transaction GCS filter.
+
 
 
 
