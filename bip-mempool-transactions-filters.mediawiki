@@ -70,7 +70,7 @@ instead of download full blocks.
 ==== gettxfilters ====
 
 The gettxfilter message is used to request transactions by 256-bit transaction IDs with the specified filters to apply. 
-ID length filed define length of transaction ID in bytes for compatability with future protocol changes and optiomizations at example for use 128-bit truncated IDs.
+ID length filed define length of transaction ID in bytes, 32 bytes means full transaction ID, 6 bytes means short transactions IDs as defined in BIP 152.
 
 {|class="wikitable"
 ! Field Size !! Description !! Data type !! Comments
@@ -104,8 +104,10 @@ txfilter is sent in response to gettxfilters, one for each transaction in the re
 Filter types defined in BIP-block-batch-filters and determine which data is included in a transaction GCS filter.
 
 
+=== Synchronithation using transaction filters ===
 
-
+Mempool transactions filters in combination with  BIP 152 allow light clients syncronize blockchain without downloading full 
+blocks.   
 
 
 
