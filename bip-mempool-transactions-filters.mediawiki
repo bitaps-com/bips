@@ -16,7 +16,7 @@
 
 This BIP describes a new addition to light client protocol defined in BIP 157. Block filters is privacy
 safe approach to keep light clients synchronized but unlike BIP 37,  BIP 157  not allow to apply filters to 
-mempool and check announcements for zero-confirm transactions. 
+mempool and check announcements for zero-confirmation transactions. 
 
 
 == Motivation ==
