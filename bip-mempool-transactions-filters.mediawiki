@@ -113,7 +113,35 @@ Described schema in part of commitment verification, works only if in future sof
 
 === Transaction filter ===
 
-work in progress ...
+This BIP defines list of transaction filter types:
+
+Unique transaction addresses:
+
+P2PK+P2PKH - 0x01
+P2SH - 0x02
+P2WPKH - 0x04
+P2WPSH - 0x08
+
+Filter types support filter combinations and addreess types correspond BIP-Block-Batch-Filters
+
+==== Filters contents ====
+
+Transaction filters contain set of UNIQUE items derived from transaction inputs and outputs hashes for standard script types (pubkey hashes, script hashes). Coinbase inputs are not used. 
+
+
+==== Filter structure ====
+
+{|
+! Field Name !! Type !! Size  || Purpose
+|-
+| tx_id || CompactSize || bytes[32]  || full 256-bit transaction id
+|-
+| number_unique_set_bytes || var_int ||  1 - 5 bytes || A variable length integer representing the size of the GCS with uniqie elements
+|-
+| unique_set || Binary blob || variable || GCS with unique  elements
+|}
+
+GCS parameters for filters is same as for current blocks batch filter.
 
 == Compatibility ==
 
