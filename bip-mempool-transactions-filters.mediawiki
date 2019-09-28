@@ -35,8 +35,8 @@ for light clients instead of loading full blocks, simply request short transacti
 
 ==== gettxfilters ====
 
-The gettxfilter message is used to request transactions by 256-bit transaction IDs with the specified filters to apply. 
-ID length filed define length of transaction ID in bytes, 32 bytes means full transaction ID, 6 bytes means short transactions IDs as defined in BIP 152 or 16 bytes truncated wtx_id hash.
+The gettxfilter message is used to request transactions by transaction IDs with the specified filters to apply. 
+ID length filed define length of transaction ID in bytes, 32 bytes means full 256-bit transaction ID, 6 bytes means short transactions IDs as defined in BIP 152 or 16 bytes truncated 128 bit witness transaction id.
 
 {|class="wikitable"
 ! Field Size !! Description !! Data type !! Comments
