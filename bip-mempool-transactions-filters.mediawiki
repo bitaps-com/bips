@@ -102,11 +102,12 @@ txfilter is sent in response to gettxfilters, one for each transaction in the re
 Filter types defined in BIP-block-batch-filters and determine which data is included in a transaction GCS filter.
 
 
-=== Synchronithation using transaction filters ===
+=== Synchronization protocol flow ===
 
 Mempool transactions filters in combination with  BIP 152 allow light clients syncronize blockchain without downloading full 
 blocks.   
 
 <img src=bip-mempool-transactions-filters/schema_a.png></img>
 
-
+The above diagram shows an example with set of unconfirmed transactions {A, B, C, D, E}. Transactions B and E is affected for 
+light client
