@@ -96,7 +96,7 @@ Merkle proof is sequence of 32 byte hashes necessary to build the path to the ro
 Mempool transactions filters in combination with  BIP 152 allow light clients syncronize blockchain without downloading full 
 blocks.   
 
-<img src=bip-mempool-transactions-filters/schema_a.png></img>
+<img src=bip-mempool-transactions-filters/schema_b.png></img>
 
 The above diagram shows an example with set of unconfirmed transactions {A, B, C, D, E}. Transactions B and E is affected for 
 light client. 
