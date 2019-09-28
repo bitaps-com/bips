@@ -161,3 +161,5 @@ One of the important point this schema is comparison between block filters and r
 Described schema in part of commitment verification works only if in future soft-fork filters commitment will be included in block validation rules. Currently light client nodes trusting that full nodes do not hiding payments, this applies to both BIP 37 and BIP 157. 
 
 
+=== Transaction filter ===
+
