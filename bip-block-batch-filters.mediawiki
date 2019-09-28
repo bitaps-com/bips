@@ -147,26 +147,23 @@ Siphash parameters: <code>k = 0</code> <code>c = 2</code> and <code>d = 4</code>
 
 This BIP defines list of  new filter types:
 
-Full filters:
+Unique block addresses in batch range:
 
 * <code>P2PK+P2PKH - 0x01</code>
 * <code>P2SH  - 0x02</code>
-* <code>P2WPKH  - 0x03</code>
-* <code>P2WPSH  - 0x04</code>
-
-Only unique addresses part:
-
-* <code>P2PK+P2PKH - 0x05</code>
-* <code>P2SH  - 0x06</code>
-* <code>P2WPKH  - 0x07</code>
+* <code>P2WPKH  - 0x04</code>
 * <code>P2WPSH  - 0x08</code>
 
-Only duplicated addresses part:
+Duplicated block addresses in batch range:
 
-* <code>P2PK+P2PKH - 0x09</code>
-* <code>P2SH  - 0x0A</code>
-* <code>P2WPKH  - 0x0B</code>
-* <code>P2WPSH  - 0x0C</code>
+* <code>P2PK+P2PKH - 0x10</code>
+* <code>P2SH  - 0x20</code>
+* <code>P2WPKH  - 0x40</code>
+* <code>P2WPSH  - 0x80</code>
+
+Filter types support filter combinations, that means in case we need block filters for all address types we should calculate
+0x01 + 0x02 + 0x04 + 0x08 + 0x10 + 0x20 + 0x40 + 0x80 = 0xff. To reduce bandwith usage light client should request 
+only unique addresses filters fisrt and only for affected block batches download duplicates.
 
 ==== Filters contents ====
 
