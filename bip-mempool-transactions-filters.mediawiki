@@ -163,3 +163,21 @@ Described schema in part of commitment verification works only if in future soft
 
 === Transaction filter ===
 
+work in progress ...
+
+== Compatibility ==
+
+Older clients remain fully compatible and interoperable after this change. 
+
+Clients which do not implement this BIP remain fully compatible after this change using existing protocols, because this is 
+additional node service and changes not affected to exist protocol.
+
+== Reference Implementation ==
+TODO
+
+== Copyright ==
+
+This document is licensed under the Creative Commons CC0 1.0 Universal license.
+
+
+
