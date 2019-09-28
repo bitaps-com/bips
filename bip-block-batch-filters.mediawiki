@@ -8,7 +8,7 @@
   Status: Draft
   Type: Standards Track
   Created: 2019-09-20
-  License: CC0-1.0
+  License: PD
 </pre>
 
   
