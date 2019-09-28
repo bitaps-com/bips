@@ -77,9 +77,7 @@ ID length filed define length of transaction ID in bytes, 32 bytes means full tr
 |-
 | 1 || ID length || uint8_t || Transaction ID length in bytes
 |-
-| 1-5 || Elements count || var_int || Number of applied filters
-|-
-| variable  || filter type || List of var_int || List of of applied filter types
+| 1-5  || filter type || var_int || Applied filter types
 |-
 | 1-5 || Elements count || var_int || Number of transaction IDs entries
 |-
