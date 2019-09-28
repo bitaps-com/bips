@@ -217,7 +217,7 @@ This parameters is close to optimal<ref>https://gist.github.com/sipa/576d5f09c3b
 
 ==== Duplicates counters ====
 
-Huffman coded sequence of duplicates counters this is sequence representing count of corresponding duplicated element. 
+Huffman coded sequence of duplicates counters. This sequence representing count of corresponding duplicated element. 
 
 ==== Commitment structure ====
 
