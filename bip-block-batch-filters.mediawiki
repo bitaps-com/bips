@@ -238,4 +238,4 @@ TODO
 
 == Copyright ==
 
-This document is licensed under the Creative Commons CC0 1.0 Universal license.
+This document is placed in the public domain.
