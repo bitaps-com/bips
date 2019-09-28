@@ -123,7 +123,7 @@ ID length filed define length of transaction ID in bytes, 32 bytes means full tr
 
 The getfilterproof message is used to request merkle proof to verify commitment as merkle root of merkle tree constructed from headers of all types of filters. In case the light client downloads all types filters and keep information about the prevoius block filters, the commitment can be calculated independently.
 
-Merkle proof is sequence of 32 byte hashesh necessary to build the path to the root from requested fiter types.
+Merkle proof is sequence of 32 byte hashes necessary to build the path to the root from requested fiter types.
 
 {|class="wikitable"
 ! Field Size !! Description !! Data type !! Comments
