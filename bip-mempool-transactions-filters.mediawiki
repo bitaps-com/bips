@@ -116,10 +116,10 @@ This BIP defines list of transaction filter types:
 
 Unique transaction addresses:
 
-P2PK+P2PKH - 0x01
-P2SH - 0x02
-P2WPKH - 0x04
-P2WPSH - 0x08
+* <code>P2PK+P2PKH - 0x01</code>
+* <code>P2SH - 0x02</code>
+* <code>P2WPKH - 0x04</code>
+* <code>P2WPSH - 0x08</code>
 
 Filter types support filter combinations and addreess types correspond BIP-Block-Batch-Filters
 
