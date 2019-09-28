@@ -221,11 +221,11 @@ Huffman coded sequence of duplicates counters. This sequence representing count 
 
 ==== Commitment structure ====
 
-A commitment is an important part of block filters for future consensus layer update, that provides protection against payment hiding for light clients. Without commitment light clients rely on the fact that most of the nodes in the network do not hide payments. Tha same asumption was in BIP37. Adding block filters commitment to coinbase transaction, as the block validation rule will improve the lightweight client protocol by moving from trust to validation. 
+A commitment is an important part of block filters for future consensus layer update, that provides protection against payment hiding for light clients. Without commitment light clients rely on the fact that most of the nodes in the network do not hide payments. Tha same asumption was in BIP37. To combat concealment of payments, light client must receive information from several independent nodes, but it still vulnerable for sybil attack. Adding block filters commitment to coinbase transaction, as the block validation rule will improve the lightweight client protocol by moving from trust to validation on consensus lyer. 
 
 <img src=bip-block-batch-filters/commitment.png></img>
 
-Block filters commitment hash is merkle root of merkle tree structure, where tree leafs is GCS filter hashes linked with previous block GCS filter hashes. Linking to previous block hashes unlock ability to download batch of filter headers and one commitment from last block to verify all. In case we download commitments for each block, we get a lot of overhead because get a block commitment means that we need to load the coinbase transaction and all block transaction hashes to make sure the coinbase transaction matches the root merkle.
+Block filters commitment hash is merkle root of merkle tree structure, where tree leafs is GCS filter hashes linked with previous block GCS filter hashes. Linking to previous block hashes unlock ability to download batch of filter headers and one commitment from last block to verify all. In case we download commitments for each block, we get a lot of overhead because get a block commitment means that we need to load the coinbase transaction and all block transaction hashes to make sure that the coinbase transaction matches the merkle root.
 
 == Light client filter processing schema ==
 
