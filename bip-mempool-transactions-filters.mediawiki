@@ -21,12 +21,12 @@ mempool and check announcements for zero-confirmation transactions.
 
 == Motivation ==
 
-BIP 157 is missed functionality to filter unconfirmed transactions, this means that Light client refused to use BIP 37 
-due to privacy issues can process unconfirmed transactions only when loading the entire mempool transaction flow. 
+BIP 157 is missed functionality to filter unconfirmed transactions. Light client that refused to use BIP 37 
+due to privacy leaks can process unconfirmed transactions only one way and this is loading the entire mempool transaction flow. 
 
 Daily transaction volume in Bitcoin blockchain is about 200,000 - 300,000 transactions and no less than 150 Mb of data.
-This is the significant daily volume of traffic for a wallet on a smartphone at example. Mempool filters this is not 
-just user friendly fast notification about new transactions. This BIP described protocol improvement give ability 
+This is the significant daily volume of traffic for a lihght wallets. Described in this BIP mempool transactions filters, 
+it is not just for convenient notification of new transactions. Transactions filters improvement give ability 
 for light clients do not download full blocks in case affected addresses in block detected and request short transactions
 filters only exactly needed full transactions.
 
