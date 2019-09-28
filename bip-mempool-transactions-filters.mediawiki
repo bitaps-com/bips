@@ -108,7 +108,7 @@ The second part shows the process of synchronizing a new block. Full node send <
 Last step is request block filters from full node and start verification process. One of the important point in this schema is comparison between block filters and all received transactions filters. The number of affected duplicate elements MUST be the same; a duplicate counter sequence is provided in the duplicate filter structure. In case this condition is not met, this means that same transaction filters hiding payments, because block filters could be verified via filters commitment. In this situation light client MUST download full block, find transaction with invalid filters and ban malicious node who sent this.
 
 
-Described schema in part of commitment verification works only if in future soft-fork filters commitment will be included in block validation rules. Currently light client nodes trusting that full nodes do not hiding payments, this applies to both BIP 37 and BIP 157, commitment verificatin part should be ignored for now.
+Described schema in part of commitment verification, works only if in future soft-fork filters commitment will be included in block validation rules. Currently light client nodes trusting that full nodes do not hiding payments, this applies to both BIP 37 and BIP 157, commitment verificatin part should be ignored for now.
 
 
 === Transaction filter ===
