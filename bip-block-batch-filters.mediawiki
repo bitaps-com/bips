@@ -178,7 +178,7 @@ Block filter created as follows:
 * all duplicates are added to the set with duplicate elements and a counter is incremented for each element of the duplicate
 * apply first 3 steps for each block transaction sequentially
 
-It is important to delete duplicates within transaction sets and count duplicates withon block set. This aproach give ability 
+It is important to delete duplicates within transaction sets and count duplicates within block set. This aproach give ability 
 to compare downloaded block filter  with set of transactions filters independently received one by one from mempool. Block filters verified by commitment and duplicates counter make it possible to unequivocally conclude that all transactions was received with correct filters. In case counters is not equal it means that the nodes that sent the transaction filters tried to hide payments from the light client. More detail https://github.com/bitaps-com/bips/blob/master/bip-mempool-transactions-filters.mediawiki.
 
 
