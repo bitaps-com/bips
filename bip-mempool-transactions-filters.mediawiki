@@ -67,29 +67,10 @@ txfilter is sent in response to gettxfilters, one for each transaction in the re
 
 Filter types defined in BIP-block-batch-filters and determine which data is included in a transaction GCS filter.
 
-==== gettxfilters ====
-
-The gettxfilter message is used to request transactions by 256-bit transaction IDs with the specified filters to apply. 
-ID length filed define length of transaction ID in bytes, 32 bytes means full transaction ID, 6 bytes means short transactions IDs as defined in BIP 152 or 16 bytes truncated wtx_id hash.
-
-{|class="wikitable"
-! Field Size !! Description !! Data type !! Comments
-|-
-| 1 || ID length || uint8_t || Transaction ID length in bytes
-|-
-| 1-5  || filter type || var_int || Applied filter types
-|-
-| 1-5 || Elements count || var_int || Number of transaction IDs entries
-|-
-| variable  || transaction ID || List of byte[] || List of transaction IDs 
-|}
-
 
 ==== getcfproof ====
 
-The getfilterproof message is used to request merkle proof to verify commitment as merkle root of merkle tree constructed from headers of all types of filters. In case the light client downloads all types filters and keep information about the prevoius block filters, the commitment can be calculated independently.
-
-Merkle proof is sequence of 32 byte hashes necessary to build the path to the root from requested fiter types.
+The getcfproof message is used to request merkle proof to verify commitment as merkle root of merkle tree constructed from headers of all types of filters. In case the light client downloads all types filters and keep information about the prevoius block filters, the commitment can be calculated independently.
 
 {|class="wikitable"
 ! Field Size !! Description !! Data type !! Comments
@@ -99,12 +80,15 @@ Merkle proof is sequence of 32 byte hashes necessary to build the path to the ro
 
 ==== cfproof ====
 
+Merkle proof is sequence of 32 byte hashes necessary to build the path to the root from requested fiter types.
 
 {|class="wikitable"
 ! Field Size !! Description !! Data type !! Comments
 |-
-| variable  || merkle path || byte[] || sequence of 32 byte hashesh necessary to build the path to root 
+| variable  || merkle proof || byte[] || sequence of 32 byte hashesh necessary to build the path to root 
 |}
+
+
 
 
 === Synchronization protocol flow ===
