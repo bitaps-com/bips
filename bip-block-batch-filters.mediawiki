@@ -207,7 +207,7 @@ This parameters is close to optimal<ref>https://gist.github.com/sipa/576d5f09c3b
 ==== Duplicates counters ====
 
 Sequence of duplicates counters this is sequence representing count of corresponding duplicated element. Information about count of each duplicated element required to ensure full verification of the completeness for transactions data received. 
-This structure and its application is described in more details in BIP-Mempool-transaction-filters-for-Light-Clients.
+This structure and its application is described in more details in https://github.com/bitaps-com/bips/blob/master/bip-mempool-transactions-filters.mediawiki.
 
 
 ==== Commitment structure ====
