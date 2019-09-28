@@ -25,47 +25,13 @@ BIP 157 is missed functionality to filter unconfirmed transactions. Light client
 due to privacy leaks can process unconfirmed transactions only one way and this is loading the entire mempool transaction flow. 
 
 Daily transaction volume in Bitcoin blockchain is about 200,000 - 300,000 transactions and no less than 150 Mb of data.
-This is the significant daily volume of traffic for a lihght wallets. Described in this BIP mempool transactions filters, 
+This is the significant daily volume of traffic for a light wallets. Described in this BIP mempool transactions filters, 
 it is not just for convenient notification of new transactions. Transactions filters improvement give ability 
-for light clients do not download full blocks in case affected addresses in block detected and request short transactions
-filters only exactly needed full transactions.
-
-<pre>
-  BIP: Mempool transactions filters for Light Clients
-  Layer: Peer Services
-  Title: Mempool transactions filters for Light Clients
-  Author: Aleksey Karpov <admin@bitaps.com>
-  Comments-Summary: None yet
-  Comments-URI: 
-  Status: Draft
-  Type: Standards Track
-  Created: 2019-09-20
-  License: CC0-1.0
-</pre>
-
-
-== Abstract ==
-
-This BIP describes a new addition to light client protocol defined in BIP 157. Block filters is privacy
-safe approach to keep light clients synchronized but unlike BIP 37,  BIP 157  not allow to apply filters to 
-mempool and check announcements for zero-confirm transactions. 
-
-
-== Motivation ==
-
-BIP 157 is missed functionality to filter unconfirmed transactions, this means that Light client refused to use BIP 37 
-due to privacy issues can process unconfirmed transactions only when loading the entire mempool transaction flow. 
-
-Daily transaction volume in Bitcoin blockchain is about 200,000 - 300,000 transactions and no less than 150 Mb of data.
-This is the significant daily volume of traffic for a wallet on a smartphone at example. Mempool filters this is not 
-just user friendly fast notification about new transactions. New P2P messages described in this BIP improve
-protocol and give ability for light clients request short transactions filters and  exactly needed full transactions 
-instead of download full blocks.
+for light clients instead of loading full blocks, simply request short transaction filters and full transactions for the affected addresses.
 
 == Specification ==
 
 === New messages ===
-
 
 ==== gettxfilters ====
 
