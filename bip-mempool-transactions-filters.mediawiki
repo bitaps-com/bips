@@ -107,5 +107,6 @@ Filter types defined in BIP-block-batch-filters and determine which data is incl
 Mempool transactions filters in combination with  BIP 152 allow light clients syncronize blockchain without downloading full 
 blocks.   
 
+<img src=bip-mempool-transactions-filters/schema_a.png></img>
 
 
