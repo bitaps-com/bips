@@ -167,9 +167,20 @@ only unique addresses filters fisrt and only for affected block batches download
 
 ==== Filters contents ====
 
-The block batch filters contain set of unique items  derived from hashes of standard script types (pubkey hashes, script hashes). This information is minimum sufficient for light wallet to sync blockchain. Output script can’t be recovered for P2PK addresses in case no information about public key. This means that watch only wallet, with imported P2PK addresses from base58 format, not able to reconstruct output script without downloading transactions where this script was seen first time. For this reason hashes are used instead of output scripts.
+The filters contain set of unique items  derived from transaction inputs and outputs hashes for standard script types (pubkey hashes, script hashes). Coinbase inputs are not used. This information is minimum sufficient for light wallet to sync blockchain. Script/Pubkey hashes is choosen instead of raw script because output script can’t be recovered for P2PK addresses in case no information about public key. This means that watch only wallet, with imported P2PK addresses from base58 format, not able to reconstruct output script without downloading transactions where this script was seen first time and will not be able to check filters.
 
-Block Filter separated to 2 parts. First part is hashed set with unuque element within filter batch range. Second part is set of duplicated elements plus sequence with counters of duplicates.
+Each transaction has a set of UNIQUE address elements involved in it. The block filter consists of 2 parts. First part is hashed set with unuque elements within filter batch range. The second part is a set of duplicated elements plus a sequence with duplicate counters.
+
+Block filter created as follows: 
+
+* first transaction set with UNIQUE elements compare with all block filters in batch include recently created block empty filter 
+* all unique items within the batch added to block filter set with unique elemets
+* all duplicates are added to the set with duplicate elements and a counter is incremented for each element of the duplicate
+* apply first 3 steps for each block transaction sequentially
+
+It is important to delete duplicates within transaction sets and count duplicates withon block set. This aproach give ability 
+to compare downloaded block filter  with set of transactions filters independently received one by one from mempool. Block filters verified by commitment and duplicates counter make it possible to unequivocally conclude that all transactions was received with correct filters. In case counters is not equal it means that the nodes that sent the transaction filters tried to hide payments from the light client. More detail https://github.com/bitaps-com/bips/blob/master/bip-mempool-transactions-filters.mediawiki.
+
 
 ==== Filter structure ====
 
@@ -206,9 +217,7 @@ This parameters is close to optimal<ref>https://gist.github.com/sipa/576d5f09c3b
 
 ==== Duplicates counters ====
 
-Sequence of duplicates counters this is sequence representing count of corresponding duplicated element. Information about count of each duplicated element required to ensure full verification of the completeness for transactions data received. 
-This structure and its application is described in more details in https://github.com/bitaps-com/bips/blob/master/bip-mempool-transactions-filters.mediawiki.
-
+Huffman coded sequence of duplicates counters this is sequence representing count of corresponding duplicated element. 
 
 ==== Commitment structure ====
 
