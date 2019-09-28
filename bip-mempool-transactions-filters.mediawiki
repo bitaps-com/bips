@@ -101,6 +101,45 @@ txfilter is sent in response to gettxfilters, one for each transaction in the re
 
 Filter types defined in BIP-block-batch-filters and determine which data is included in a transaction GCS filter.
 
+==== gettxfilters ====
+
+The gettxfilter message is used to request transactions by 256-bit transaction IDs with the specified filters to apply. 
+ID length filed define length of transaction ID in bytes, 32 bytes means full transaction ID, 6 bytes means short transactions IDs as defined in BIP 152 or 16 bytes truncated wtx_id hash.
+
+{|class="wikitable"
+! Field Size !! Description !! Data type !! Comments
+|-
+| 1 || ID length || uint8_t || Transaction ID length in bytes
+|-
+| 1-5  || filter type || var_int || Applied filter types
+|-
+| 1-5 || Elements count || var_int || Number of transaction IDs entries
+|-
+| variable  || transaction ID || List of byte[] || List of transaction IDs 
+|}
+
+
+==== getcfproof ====
+
+The getfilterproof message is used to request merkle proof to verify commitment as merkle root of merkle tree constructed from headers of all types of filters. In case the light client downloads all types filters and keep information about the prevoius block filters, the commitment can be calculated independently.
+
+Merkle proof is sequence of 32 byte hashesh necessary to build the path to the root from requested fiter types.
+
+{|class="wikitable"
+! Field Size !! Description !! Data type !! Comments
+|-
+| 1-5  || filter type || var_int || Filter types
+|}
+
+==== cfproof ====
+
+
+{|class="wikitable"
+! Field Size !! Description !! Data type !! Comments
+|-
+| variable  || merkle path || byte[] || sequence of 32 byte hashesh necessary to build the path to root 
+|}
+
 
 === Synchronization protocol flow ===
 
@@ -110,4 +149,8 @@ blocks.
 <img src=bip-mempool-transactions-filters/schema_a.png></img>
 
 The above diagram shows an example with set of unconfirmed transactions {A, B, C, D, E}. Transactions B and E is affected for 
-light client
+light client. 
+
+On fisrt part shown how light clinet respon for new transaction announces, requesting transaction filters that are significantly smaller than the transactions themselves. In case positive test on received filter, light client request full transaction data.
+
+The second part shows the process of synchronizing a new block. Full node send <code>cmpctblock</code> message with blocks header and short transaction IDs. Light client request missed transactions fiters then request transactions affected is received filters and coinbase transaction. We need coinbase transaction downloaded to retrive witness commitment and block filters commitment.
