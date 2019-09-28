@@ -27,7 +27,7 @@ due to privacy leaks can process unconfirmed transactions only one way and this 
 Daily transaction volume in Bitcoin blockchain is about 200,000 - 300,000 transactions and no less than 150 Mb of data.
 This is the significant daily volume of traffic for a light wallets. Described in this BIP mempool transactions filters, 
 it is not just for convenient notification of new transactions. Transactions filters improvement give ability 
-for light clients instead of loading full blocks, simply request short transaction filters and full transactions for the affected addresses.
+for light clients instead of loading full blocks, simply request short transaction filters and full transactions only for the affected addresses. This approach consumes less bandwidth than loading full blocks and serving the entire flow of unconfirmed transactions.
 
 == Specification ==
 
