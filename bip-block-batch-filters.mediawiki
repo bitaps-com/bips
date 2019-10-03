@@ -117,6 +117,25 @@ Comparsion BIP 158 and different block ranges bacthes :
 
 Separation of filters by address type, allows light client not to download redundant information without compromising privacy. It will significantly reduce global bandwidth usage, because the most of wallets are processing one type of addresses.
 
+==== Total filters size ====
+
+BIP 158 total filters size is about 4.3 Gb (0 -> 596,735 blocks)
+
+Block batch size 4032 blocks (0 -> 596,735 blocks):
+
+* total size: 3.14 Gb
+** <code>P2PK+P2PKH</code> addresses: 2.41 Gb
+*** addresses: 1.80 Gb
+*** duplicated: 0.61 Gb
+** <code>P2SH</code> addresses: 0.63 Gb
+*** addresses: 0.47 Gb
+*** duplicates:  0.17 Gb
+** <code>P2WPKH</code> addresses: 85 Mb
+*** addresses: 69 Mb
+*** duplicates:  15 Mb
+** <code>P2WSH</code> addresses: 7 Mb
+*** addresses: 4 Mb
+*** duplicates:  3 Mb
 
 == Specification ==
 
