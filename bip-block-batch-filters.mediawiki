@@ -125,39 +125,30 @@ Total size for filters 0 -> 596,735 blocks.
 Total filters size is about 4.3 Gb
 
 
+===== Block batch size 2016 blocks =====
+
+* total size: 3.32 Gb
+** <code>P2PK+P2PKH</code> addresses: 2.56 Gb (1.97 + 0.58)
+** <code>P2SH</code> addresses: 0.67 Gb (0.51 + 0.16)
+** <code>P2WPKH</code> addresses: 87 Mb  (72 + 15)
+** <code>P2WSH</code> addresses: 7 Mb (4 + 3)
 
 ===== Block batch size 4032 blocks =====
 
 * total size: 3.14 Gb
-** <code>P2PK+P2PKH</code> addresses: 2.41 Gb
-*** addresses: 1.80 Gb
-*** duplicated: 0.61 Gb
-** <code>P2SH</code> addresses: 0.63 Gb
-*** addresses: 0.47 Gb
-*** duplicates:  0.17 Gb
-** <code>P2WPKH</code> addresses: 85 Mb
-*** addresses: 69 Mb
-*** duplicates:  15 Mb
-** <code>P2WSH</code> addresses: 7 Mb
-*** addresses: 4 Mb
-*** duplicates:  3 Mb
+** <code>P2PK+P2PKH</code> addresses: 2.41 Gb (1.80 + 0.61)
+** <code>P2SH</code> addresses: 0.63 Gb (0.47 + 0.17)
+** <code>P2WPKH</code> addresses: 85 Mb (69 + 15)
+** <code>P2WSH</code> addresses: 7 Mb (4 + 3)
 
 
 ===== Block batch size 8064 blocks =====
 
 * total size: 3.0 Gb
-** <code>P2PK+P2PKH</code> addresses: 2.3 Gb
-*** addresses: 1.67 Gb
-*** duplicated: 0.63 Gb
-** <code>P2SH</code> addresses: 0.61 Gb
-*** addresses: 0.43 Gb
-*** duplicates:  0.17 Gb
-** <code>P2WPKH</code> addresses: 84 Mb
-*** addresses: 67 Mb
-*** duplicates:  16 Mb
-** <code>P2WSH</code> addresses: 7 Mb
-*** addresses: 4 Mb
-*** duplicates:  3 Mb
+** <code>P2PK+P2PKH</code> addresses: 2.3 Gb (1.67 + 0.63)
+** <code>P2SH</code> addresses: 0.61 Gb (0.43 + 0.17)
+** <code>P2WPKH</code> addresses: 84 Mb (67 + 16)
+** <code>P2WSH</code> addresses: 7 Mb (4 + 3)
 
 == Specification ==
 
