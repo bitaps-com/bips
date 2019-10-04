@@ -125,7 +125,7 @@ Total size for filters 0 -> 596,735 blocks.
 Total filters size is about 4.3 Gb
 
 
-===== Block batch size 2016 blocks =====
+===== Batch 2016 blocks =====
 
 * total size: 3.32 Gb
 ** <code>P2PK+P2PKH</code> addresses: 2.56 Gb (1.97 + 0.58)
@@ -133,7 +133,7 @@ Total filters size is about 4.3 Gb
 ** <code>P2WPKH</code> addresses: 87 Mb  (72 + 15)
 ** <code>P2WSH</code> addresses: 7 Mb (4 + 3)
 
-===== Block batch size 4032 blocks =====
+===== Batch 4032 blocks =====
 
 * total size: 3.14 Gb
 ** <code>P2PK+P2PKH</code> addresses: 2.41 Gb (1.80 + 0.61)
@@ -142,7 +142,7 @@ Total filters size is about 4.3 Gb
 ** <code>P2WSH</code> addresses: 7 Mb (4 + 3)
 
 
-===== Block batch size 8064 blocks =====
+===== Batch 8064 blocks =====
 
 * total size: 3.0 Gb
 ** <code>P2PK+P2PKH</code> addresses: 2.3 Gb (1.67 + 0.63)
