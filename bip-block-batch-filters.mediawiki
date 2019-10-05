@@ -140,7 +140,7 @@ Total filters size is about 4.3 Gb
 For each block, filters are derived containing sets of addresses associated with the block. Filter is probabilistic structure which matches all items in the set with probability 1, and matches other items with probability 1/M for some integer parameter M. To construct this probabilistic structure used set of uniqe hashed elements where maximum bit length on of element defines false positive rate. To reduce size of filter used Golomb-Rice coding the same schema like in BIP 158 and called Golomb-coded set - GCS.
 
 At a high level, a GCS is constructed from a set of <code>N</code> items by:
-# hashing all items to 64-bit integers in the range <code>[0, N * M)</code>
+# hashing all items to 64-bit integers in the range <code>[0, 2 ^ ceil(log2(N * M) )</code>
 # sorting the hashed values in ascending order
 # computing the differences between each value and the previous one
 # writing the differences sequentially, compressed with Golomb-Rice coding
@@ -157,6 +157,7 @@ SipHash is fundamentally different from cryptographic hash functions like SHA an
 128-bit key <code>k</code> should be set to 0 for all filters.
 
 Siphash parameters: <code>k = 0</code> <code>c = 2</code> and <code>d = 4</code>.
+
 
 
 == Block Batch Filters ==
