@@ -52,19 +52,6 @@ Filters size:  57.64 Mb
 
 Bandwidth consumption reduced about 16%. 
 
-==== Total filters size and adaptive FPS rate ====
-
-Total filters size for BIP 158 is about 4.3 Gb ( 596,200 blocks). To achieve a smaller filters size, should take a more flexible approach. Use of optimal and flexible parameters for false positive rate the key of success.
-
-We get this opportunity using a flexible approach to false positive rate parameters in accordance with the count of addresses in  blockchain. Currently about 560 millions unique addresses stored in bitcoin blockchain and this value grows with each block. To get expected false positive rate we should use <code>M=560,000,000</code>  as parameter used in BIP 158. Unique addresses count in blockchain:
-* 0 - 100,000 blocks  174,718
-* 0 - 200,000 blocks  6,577,160
-* 0 - 300,000 blocks  35,535,921
-* 0 - 400,000 blocks  128,802,764
-* 0 - 500,000 blocks  346,316,499
-
-To reduce filters size we should use adaptive and optimal parameters <code>C</code> - cumulative count of unique blocks addresses until given block,  <code>P = floor(log2(C / 1.497137))</code>, <code> M= 1.49713 * 2^P </code>.
-
 ==== Commitment ====
 
 This is one of the useful properties that filters should meet, filter construction should use deterministic algorithm to give ability publish commitment for filter like witness commitment is in an OP_RETURN output of the coinbase transaction.
@@ -137,10 +124,10 @@ Total filters size is about 4.3 Gb
 
 == Specification ==
 
-For each block, filters are derived containing sets of addresses associated with the block. Filter is probabilistic structure which matches all items in the set with probability 1, and matches other items with probability 1/M for some integer parameter M. To construct this probabilistic structure used set of uniqe hashed elements where maximum bit length on of element defines false positive rate. To reduce size of filter used Golomb-Rice coding the same schema like in BIP 158 and called Golomb-coded set - GCS.
+For each block, filters are derived containing sets of addresses associated with the block. Filter is probabilistic structure which matches all items in the set with probability 1, and matches other items with probability 1/M for some integer parameter M. <code>M = Z * K * L</code>, <code>Z</code> - number of monitoring addresses, <code>K</code> - number of blocks in batch, <code>L</code> - number of batches. In other words one false positive result within L batches with K blocks each, for set of Z addresses. This BIP use <code>M = 10,000 * 4,032 * 10</code>   To construct this probabilistic structure used set of uniqe hashed elements where maximum bit length on of element defines false positive rate. To reduce size of filter used Golomb-Rice coding the same schema like in BIP 158 and called Golomb-coded set - GCS.
 
 At a high level, a GCS is constructed from a set of <code>N</code> items by:
-# hashing all items to 64-bit integers in the range <code>[0, 2 ^ ceil(log2(N * M) )</code>
+# hashing all items to 64-bit integers in the range <code>[0,  N * M)</code>
 # sorting the hashed values in ascending order
 # computing the differences between each value and the previous one
 # writing the differences sequentially, compressed with Golomb-Rice coding
