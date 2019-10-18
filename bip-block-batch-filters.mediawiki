@@ -45,7 +45,7 @@ Size of downloaded false positive blocks (~32 Mb) can be excluded by use filters
 
 <pre>
 Parameters for BIP 158 Golomb coded set: M=54975581 P=25
-False positive blocks 0 from 2,000
+False positive blocks 0 from 2,000 blocks 
 Download 57.64 Mb  
 Filters size:  57.64 Mb
 </pre>
