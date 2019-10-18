@@ -75,9 +75,8 @@ Returning to the example above, if we are tracking a set of addresses <code>{A, 
 
 ==== Commitment ====
 
-This is one of the useful properties that filters should meet, filter construction should use deterministic algorithm to give ability publish commitment for filter like witness commitment is in an OP_RETURN output of the coinbase transaction.
-By adding miners to the task, creating filters, checking content and making commitment, unlock the protection for spv nodes from concealing payments at the consensus level. Filters commitment is optional and could be added infuture soft fork.
-
+This is one of the useful properties that filters should meet, filter construction should use deterministic algorithm to give ability publish commitment for filters like witness commitment is in an OP_RETURN output of the coinbase transaction.
+By adding the task of creating filters to the rule of consensus, miners will create filters, check the contents and make commitments. This unlock the protection of spv-nodes from concealing payments. Adding block filters commitment to coinbase transaction, as the block validation rule will improve the lightweight client protocol by moving from trust to validation on consensus layer. The filters commitment is beyond the scope of this BIP and may be added in a future soft fork, but the filters described here are fully adapted for this improvement.
 
 
 ==== Total filters size ====
@@ -88,41 +87,16 @@ Total size for filters 0 -> 596,735 blocks.
 Total filters size is about 4.3 Gb
 
 
-===== Batch 2016 blocks =====
+===== Batch 1008 blocks =====
 
-* total size: 3.32 Gb
+* total size: 3.91 Gb
 ** <code>P2PK+P2PKH</code> addresses: 2.56 Gb (1.97 + 0.58)
 ** <code>P2SH</code> addresses: 0.67 Gb (0.51 + 0.16)
 ** <code>P2WPKH</code> addresses: 87 Mb  (72 + 15)
 ** <code>P2WSH</code> addresses: 7 Mb (4 + 3)
 
-~ 8.88 Mb buffer size required to process filters
+9%  less space than  BIP 158, saving on total filter size is not significant but this BIP use lot of lower false positive rate.
 
-22%  less space than  BIP 158
-
-===== Batch 4032 blocks =====
-
-* total size: 3.14 Gb
-** <code>P2PK+P2PKH</code> addresses: 2.41 Gb (1.80 + 0.61)
-** <code>P2SH</code> addresses: 0.63 Gb (0.47 + 0.17)
-** <code>P2WPKH</code> addresses: 85 Mb (69 + 15)
-** <code>P2WSH</code> addresses: 7 Mb (4 + 3)
-
-~ 16.25  Mb buffer size required to process filters
-
-27%  less space than  BIP 158
-
-===== Batch 8064 blocks =====
-
-* total size: 3.0 Gb
-** <code>P2PK+P2PKH</code> addresses: 2.3 Gb (1.67 + 0.63)
-** <code>P2SH</code> addresses: 0.61 Gb (0.43 + 0.17)
-** <code>P2WPKH</code> addresses: 84 Mb (67 + 16)
-** <code>P2WSH</code> addresses: 7 Mb (4 + 3)
-
-~ 30.1  Mb buffer size required to process filters
-
-30%  less space than  BIP 158
 
 == Specification ==
 
