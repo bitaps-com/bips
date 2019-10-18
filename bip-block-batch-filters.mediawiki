@@ -67,7 +67,7 @@ Combining filters for ranges of blocks to batches gives another opportunity to r
 
 On picture below you can see first part of unique addresses for block filters highlighted in blue. Duplicated elements below, have a distinctive feature. They form a separate set for encoding which a sufficiently high FPS is enough, that means save alot of space.
 
-<img src=bip-block-batch-filters/batching_b.png></img>
+<img src=bip-block-batch-filters/batch.png></img>
 
 For example, an SPV wallet keeps track set of addresses {Q,V,C,E}. On block 1 we have positive test and download this block. On block 2 we have no positive test on first part and then we check second part. The second part consists only of duplicates from the beginning of the block till recent block. Our task is get check is this duplicated elements belong to our addresses {Q,V,C,E}. To solve this task we should compare set of  duplicates from recent block with a set of addresses we track. But we can reduce our monitoring set to a smaller set, consisting of the tracked addresses that were used from the beginning of the range till recent block. For block 2 on example compare {E} and {B}, for block 570 {E} and {G,F} and for block 2015 {E} and {E, S, A}.
 
