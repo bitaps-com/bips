@@ -68,9 +68,9 @@ Combining filters for ranges of blocks to batches gives another opportunity to r
 On the picture below shows the structure of the batch. Unique addresses for block filters highlighted in blue. All unique elements are indexed.Duplicate items are pointers. For each duplicate element we store counter of quantity of transactions with duplicates in the block. 
 
 <img src=bip-block-batch-filters/batch2.png></img>
-On picture <code>Block 2</code> have address <code>E</code> as duplicate element and count of affected transaction by this address is one.
-Block 570 have address G and 3 affected transactions with this address. Separation of unique elements and duplicates also gives some improvement in the filter scanning speed, because checking the second part of the filter is only necessary if we have affected addresses in recent batch and we need check only small set of affected addresses.
-Returning to the example above, if we are tracking a set of addresses {A, J, Q} only starting from block 570 (inclusive), we need to check the part with duplicates. Starting from block 570, we need to check only the element J, and from block 1567 the set {J, Q}, in other words, it is enough for us to check only the our affected elements in recent batch.
+On picture <code>Block 2</code> have address <code>E</code> as duplicate element and count of affected block transactions by this address is one.
+<code>Block 570</code> have address <code>G</code> and 3 affected transactions with this address. Separation of unique elements and duplicates also gives some improvement in the filter scanning speed, because checking the second part of the filter is only necessary if we have affected addresses in recent batch and we need check only small set of affected addresses.
+Returning to the example above, if we are tracking a set of addresses <code>{A, J, Q}</code> only starting from <code>Block 570</code> (inclusive), we need to check the part with duplicates. Starting with <code>Block 570</code>, we need to check only the element <code>J</code>, and then from <code>Block 1567</code> we need to check set <code>{J, Q}</code>, in other words, it’s enough for us to check for duplicates only for our affected elements in the last batch.
 
 
 ==== Commitment ====
