@@ -50,7 +50,7 @@ Download 57.64 Mb
 Filters size:  57.64 Mb
 </pre>
 
-Based on the results of the experiment, we can see that bandwidth consumption reduced about 16% when we use lower false positive rate despite the increased filter size. 
+Based on the results of the experiment, we can see that bandwidth consumption reduced about 16% when we use lower false positive rate despite the increased filters size. 
 
 
 ==== Separating filters by address type ====
