@@ -18,25 +18,25 @@ The filter construction proposed is an alternative to BIP 158 filters, with lowe
 
 == Motivation ==
 
-Block filters designed to help light clients analize block contents without downloading full blocks and minimize the expected bandwidth consumed. The main difference from BIP 37 approach is no privacy leakage. BIP 158 defines initial filter type <code>basic</code>. This BIP proposed more effective and flexible alternative
+Block filters designed to help light clients analize block contents without downloading full blocks and minimize the expected bandwidth consumed. The main advantages of the BIP 37 approach are the lack of privacy leakage and the absence of a denial of service (DoS) attack vector for nodes. BIP 158 defines initial filter type <code>basic</code>. This BIP proposed more effective and flexible alternative.
 
 Fisrt of all lets determine reasanable number of addresses tracked by a light client in most common case.
 
-To achieve privacy and security, wallets must follow the rule - no address reuse. This means that each payment
-received or sent uses one or more new addresses. The wallet makes 2-3 payments per day, during the year the number 
+To achieve privacy and security, wallets must follow the "no address reuse" rule. This means that each payment
+received or sent uses one or more new addresses. Suppose wallet makes 2-3 payments per day, during the year the number 
 of used addresses increases to about 1000 pieces. All addresses that were used at least once should be monitored
 for new payments. Assume in this BIP that a reasonable estimated number of wallet monitoring addresses is 10 000 pieces. 
 
-Сonsider the key parameters that the filter should match:
+Сonsider the key parameters that the filters should match:
 
 
 ==== False positive rate ====
 
-False positive rate should not be high and provide effective filtering and reduce bandwidth consumprion. False positive rate in BIP 158 is not low enough. Lower bandwidth consumption can be achieved with a lower false positive filter and a larger fiters size with the same scheme. Below provided result of test with  10,000 addresses in monitoring for 2,000 blocks (7,300 addresses each block):
+False positive rate should not be high and provide effective filtering to reduce bandwidth consumption. False positive rate in BIP 158 is not low enough. Lower bandwidth consumption can be achieved with a lower false positive filter and a larger fiters size with the same scheme. Below provided result of test with  10,000 addresses in monitoring for 2,000 blocks (7,300 elements inside each block):
 
 <pre>
-Parameters for GCS: M=784931 P=19
-False positive blocks 32 from 2,000 
+Parameters for BIP 158 Golomb coded set: M=784931 P=19
+False positive tests = 32 from 2,000 blocks 
 Filters size:  36.64 Mb
 Downloaded 68.64 Mb (32 blocks included);
 </pre>
@@ -44,25 +44,26 @@ Downloaded 68.64 Mb (32 blocks included);
 Size of downloaded false positive blocks (~32 Mb) can be excluded by use filters with lower false positive rate . 
 
 <pre>
-Parameters for GCS: M=54975581 P=25
+Parameters for BIP 158 Golomb coded set: M=54975581 P=25
 False positive blocks 0 from 2,000
 Download 57.64 Mb  
 Filters size:  57.64 Mb
 </pre>
 
-Bandwidth consumption reduced about 16%. 
+Based on the results of the experiment, we can see that bandwidth consumption reduced about 16% when we use lower false positive rate despite the increased filter size. 
 
-==== Commitment ====
 
-This is one of the useful properties that filters should meet, filter construction should use deterministic algorithm to give ability publish commitment for filter like witness commitment is in an OP_RETURN output of the coinbase transaction.
-By adding miners to the task, creating filters, checking content and making commitment, unlock the protection for spv nodes from concealing payments at the consensus level. Filters commitment is optional and could be added infuture soft fork.
+==== Separating filters by address type ====
+
+Separating filters by address type, allows light client not to download redundant information without compromising privacy. It will significantly reduce global bandwidth usage, because the most of wallets are processing only one type of addresses.
+
 
 ==== Batching ====
 
 About 94% of all addresses recorded in bitcoin blockchain have zero balance at this moment, this means that at 
-least 2 records for 94% of addresses in blockchain. Each spent utxo have 1 creating and 1 spending records. The presence of duplicate elements is also due to a lot of addresses was reused.
+least 2 records for 94% of addresses in blockchain. Each spent utxo have 1 creating and 1 spending records. The presence of duplicate elements is also due to the fact that many addresses are used several times.
 
-Combining filters for ranges of blocks gives another opportunity to reduce the size of filters. Divide the filter elements into 2 parts. First one is uniqe elements within range of <code>Q</code> blocks and second part is duplicated element in same block range. 
+Combining filters for ranges of blocks to batches gives another opportunity to reduce the size of filters. Separation of filters of a batch of filter elements into 2 parts allows encoding data more compactly.First part is unique addresses within batch and second part is duplicate element in recent batch.
 
 On picture below you can see first part of unique addresses for block filters highlighted in blue. Duplicated elements below, have a distinctive feature. They form a separate set for encoding which a sufficiently high FPS is enough, that means save alot of space.
 
@@ -74,9 +75,13 @@ Let estimate resanable count of possible affected addresses for SPV wallet withi
 
 
 
-==== Separation of filters by address type ====
 
-Separation of filters by address type, allows light client not to download redundant information without compromising privacy. It will significantly reduce global bandwidth usage, because the most of wallets are processing one type of addresses.
+==== Commitment ====
+
+This is one of the useful properties that filters should meet, filter construction should use deterministic algorithm to give ability publish commitment for filter like witness commitment is in an OP_RETURN output of the coinbase transaction.
+By adding miners to the task, creating filters, checking content and making commitment, unlock the protection for spv nodes from concealing payments at the consensus level. Filters commitment is optional and could be added infuture soft fork.
+
+
 
 ==== Total filters size ====
 Total size for filters 0 -> 596,735 blocks.
