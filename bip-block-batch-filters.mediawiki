@@ -65,7 +65,7 @@ least 2 records for 94% of addresses in blockchain. Each spent utxo have 1 creat
 
 Combining filters for ranges of blocks to batches gives another opportunity to reduce the size of filters. Separation of filters of a batch of filter elements into 2 parts allows encoding data more compactly.First part is unique addresses within batch and second part is duplicate element in recent batch.
 
-On picture below you can see first part of unique addresses for block filters highlighted in blue. Duplicated elements below, have a distinctive feature. They form a separate set for encoding which a sufficiently high FPS is enough, that means save alot of space.
+On the picture below shows the structure of the batch. Unique addresses for block filters highlighted in blue. All unique elements are indexed.Duplicate items are pointers. For each duplicate element we store counter of quantity of duplicates within the block. 
 
 <img src=bip-block-batch-filters/batch.png></img>
 
