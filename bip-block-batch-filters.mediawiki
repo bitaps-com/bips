@@ -80,22 +80,16 @@ By adding the task of creating filters to the rule of consensus, miners will cre
 
 
 ==== Total filters size ====
-Total size for filters 0 -> 596,735 blocks.
+Total size for filters calcalted for range  0 -> 596,735 blocks.
 
-===== BIP 158 =====
-
-Total filters size is about 4.3 Gb
-
-
-===== Batch 1008 blocks =====
-
-* total size: 3.91 Gb
+* <b>BIP 158</b> total size: 4.3 Gb
+* <b>Batch 1008 blocks</b> total size: 3.91 Gb
 ** <code>P2PK+P2PKH</code> addresses: 2.56 Gb (1.97 + 0.58)
 ** <code>P2SH</code> addresses: 0.67 Gb (0.51 + 0.16)
 ** <code>P2WPKH</code> addresses: 87 Mb  (72 + 15)
 ** <code>P2WSH</code> addresses: 7 Mb (4 + 3)
 
-9%  less space than  BIP 158, saving on total filter size is not significant but this BIP use lot of lower false positive rate.
+9%  less space than  BIP 158, saving on total filter size is not significant but this BIP use lower false positive rate.
 
 
 == Specification ==
