@@ -67,7 +67,7 @@ Combining filters for ranges of blocks to batches gives another opportunity to r
 
 On the picture below shows the structure of the batch. Unique addresses for block filters highlighted in blue. All unique elements are indexed.Duplicate items are pointers. For each duplicate element we store counter of quantity of transactions with duplicates in the block. 
 
-<img src=bip-block-batch-filters/batch.png></img>
+<img src=bip-block-batch-filters/batch2.png></img>
 
 At exampe address block 2 have address E as duplictaed element and count of affected transaction for E addresses is 1.
 Block 570 have address G and 3 affected transactions with this address. Separation of unique elements and duplicates also gives some improvement in the filter scanning speed, because checking the second part of the filter is only necessary if we have affected addresses in recent batch and we need check only small set of affected addresses.
