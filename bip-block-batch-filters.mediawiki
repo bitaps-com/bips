@@ -65,15 +65,13 @@ least 2 records for 94% of addresses in blockchain. Each spent utxo have 1 creat
 
 Combining filters for ranges of blocks to batches gives another opportunity to reduce the size of filters. Separation of filters of a batch of filter elements into 2 parts allows encoding data more compactly.First part is unique addresses within batch and second part is duplicate element in recent batch.
 
-On the picture below shows the structure of the batch. Unique addresses for block filters highlighted in blue. All unique elements are indexed.Duplicate items are pointers. For each duplicate element we store counter of quantity of duplicates within the block. 
+On the picture below shows the structure of the batch. Unique addresses for block filters highlighted in blue. All unique elements are indexed.Duplicate items are pointers. For each duplicate element we store counter of quantity of transactions with duplicates in the block. 
 
 <img src=bip-block-batch-filters/batch.png></img>
 
-For example, an SPV wallet keeps track set of addresses {Q,V,C,E}. On block 1 we have positive test and download this block. On block 2 we have no positive test on first part and then we check second part. The second part consists only of duplicates from the beginning of the block till recent block. Our task is get check is this duplicated elements belong to our addresses {Q,V,C,E}. To solve this task we should compare set of  duplicates from recent block with a set of addresses we track. But we can reduce our monitoring set to a smaller set, consisting of the tracked addresses that were used from the beginning of the range till recent block. For block 2 on example compare {E} and {B}, for block 570 {E} and {G,F} and for block 2015 {E} and {E, S, A}.
-
-Let estimate resanable count of possible affected addresses for SPV wallet within batch. On the assumption 2-3 payments daily we have about 42 affected addresses in a 2 weeks or 2016 blocks range. Siutable parameters for GCS is <code>M = 45 P = 5</code>, this means that duplicated elements coded with small number of bits. As you can see on picture, 4 bits per duplicate element and 20-22 bits per unique element.
-
-
+At exampe address block 2 have address E as duplictaed element and count of affected transaction for E addresses is 1.
+Block 570 have address G and 3 affected transactions with this address. Separation of unique elements and duplicates also gives some improvement in the filter scanning speed, because checking the second part of the filter is only necessary if we have affected addresses in recent batch and we need check only small set of affected addresses.
+Returning to the example above, if we are tracking a set of addresses {A, J, Q} only starting from block 570 (inclusive), we need to check the part with duplicates. Starting from block 570, we need to check only the element J, and from block 1567 the set {J, Q}, in other words, it is enough for us to check only the our affected elements in recent batch.
 
 
 ==== Commitment ====
