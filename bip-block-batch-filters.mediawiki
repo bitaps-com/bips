@@ -32,25 +32,7 @@ for new payments. Assume in this BIP that a reasonable estimated number of walle
 
 ==== False positive rate ====
 
-False positive rate should not be high and provide effective filtering to reduce bandwidth consumption. False positive rate in BIP 158 is not low enough. Lower bandwidth consumption can be achieved with a lower false positive filter and a larger fiters size with the same scheme. Below provided result of test with  10,000 addresses in monitoring for 2,000 blocks (7,300 elements inside each block):
-
-<pre>
-Parameters for BIP 158 Golomb coded set: M=784931 P=19
-False positive tests = 32 from 2,000 blocks 
-Filters size:  36.64 Mb
-Downloaded 68.64 Mb (32 blocks included);
-</pre>
-
-Size of downloaded false positive blocks (~32 Mb) can be excluded by use filters with lower false positive rate . 
-
-<pre>
-Parameters for BIP 158 Golomb coded set: M=54975581 P=25
-False positive blocks 0 from 2,000 blocks 
-Download 57.64 Mb  
-Filters size:  57.64 Mb
-</pre>
-
-Based on the results of the experiment, we can see that bandwidth consumption reduced about 16% when we use lower false positive rate despite the increased filters size. 
+False positive rate should not be high and provide effective filtering to reduce bandwidth consumption.
 
 
 ==== Separating filters by address type ====
