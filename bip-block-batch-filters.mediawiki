@@ -92,7 +92,7 @@ Total size for filters calcalted for range  0 -> 596,735 blocks.
 ** <code>P2WPKH</code> addresses: 130 Mb  
 ** <code>P2WSH</code> addresses: 15 Mb
 
-Batch filters 12% smaller than the BIP 158.
+Batch filters are 12% smaller than the BIP 158.
 
 
 == Specification ==
