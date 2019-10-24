@@ -29,9 +29,36 @@ for new payments. Assume in this BIP that a reasonable estimated number of walle
 
 Сonsider the key parameters that the filters should match:
 
+==== Total filters size and false positive rate ====
 
-==== False positive rate ====
+The frequency of false positives should not be high and provide effective filtering to reduce bandwidth consumption, but to achieve this we must increase the information entropy of the elements, which leads to an increase in size. 
 
+BIP 158 filters use an array with the size of the elements <code>N * M</code> to map all possible elements hashes. Where <code>N</code> count of elements in block and <code>M = 784931</code> constant represent <code>1/M</code> probabilty rate. In this case we are dealing with floating parameter <code>F = N * M</code>. 
+
+work in progress ...
+
+
+Total size for filters calcalted for range  0 -> 596,735 blocks.
+
+* <b>BIP 158</b> total size: 4.3 Gb
+* <b>Batch 1008 blocks</b> total size: 3.7 Gb
+** <code>P2PK+P2PKH</code> addresses: 2.8 Gb
+** <code>P2SH</code> addresses: 812 Mb
+** <code>P2WPKH</code> addresses: 103 Mb  
+** <code>P2WSH</code> addresses: 5 Mb
+
+Batch filters size are 15% smaller than the BIP 158 and have lower false positive rate.
+Around 3000 false positive tests for 596,735, this means about 0.5% blocks affected.
+
+
+Batch filters consist from:
+
+    Elements: 854,558,287   2.8442 byte per encoded element 
+    Duplicates: 1,161,738,133  1.3468 byte per encoded duplicate
+    
+    Total addresses 2,016,296,420  - 1.9815 byte per encoded address
+    
+    
 
 
 
@@ -63,32 +90,7 @@ This is one of the useful properties that filters should meet, filter constructi
 By adding the task of creating filters to the rule of consensus, miners will create filters, check the contents and make commitments. This unlock the protection of spv-nodes from concealing payments. Adding block filters commitment to coinbase transaction, as the block validation rule will improve the lightweight client protocol by moving from trust to validation on consensus layer. The filters commitment is beyond the scope of this BIP and may be added in a future soft fork, but the filters described here are fully adapted for this improvement.
 
 
-==== Total filters size and false positive rate====
 
-The frequency of false positives should not be high and provide effective filtering to reduce bandwidth consumption, but to achieve this we must increase the information entropy of the elements, which leads to an increase in size. 
-
-
-Total size for filters calcalted for range  0 -> 596,735 blocks.
-
-* <b>BIP 158</b> total size: 4.3 Gb
-* <b>Batch 1008 blocks</b> total size: 3.7 Gb
-** <code>P2PK+P2PKH</code> addresses: 2.8 Gb
-** <code>P2SH</code> addresses: 812 Mb
-** <code>P2WPKH</code> addresses: 103 Mb  
-** <code>P2WSH</code> addresses: 5 Mb
-
-Batch filters size are 15% smaller than the BIP 158 and have lower false positive rate.
-Around 3000 false positive tests for 596,735, this means about 0.5% blocks affected.
-
-
-Batch filters consist from:
-
-    Elements: 854,558,287   2.8442 byte per encoded element 
-    Duplicates: 1,161,738,133  1.3468 byte per encoded duplicate
-    
-    Total addresses 2,016,296,420  - 1.9815 byte per encoded address
-    
-    
 
 
 == Specification ==
