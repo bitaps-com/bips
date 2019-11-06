@@ -37,12 +37,8 @@ Total filters size calcalted for range  0 -> 596,735 blocks.
 
 * <b>BIP 158</b> total size: 4.3 Gb
 * <b>Batch 1008 blocks</b> total size: 3.4 Gb
-** <code>P2PK+P2PKH</code> addresses: 2.8 Gb
-** <code>P2SH</code> addresses: 812 Mb
-** <code>P2WPKH</code> addresses: 103 Mb  
-** <code>P2WSH</code> addresses: 5 Mb
 
-Batch filters size about 20% smaller than the BIP 158 and have lower false positive rate.
+Batch filters size about 20% smaller than the BIP 158.
 
 
 ==== Separating filters by address type ====
