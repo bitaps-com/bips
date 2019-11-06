@@ -20,14 +20,33 @@ The filter construction proposed is an alternative to BIP 158 filters, with lowe
 
 Block filters designed to help light clients analize block contents without downloading full blocks and minimize the expected bandwidth consumed. The main difference from the BIP 37 approach is the absence of privacy leakage and the Denial of Service (DoS) attack vector for nodes. BIP 158 defines initial filter type <code>basic</code>. This BIP proposed more effective and flexible alternative.
 
-Fisrt of all lets determine reasanable number of addresses tracked by a light client in most common case.
+First of all let's determine reasonable number of addresses tracked by a light client in most common case. We will use this value for false positive rate tests in this BIP.
 
 To achieve privacy and security, wallets must follow the "no address reuse" rule. This means that each payment
-received or sent uses one or more new addresses. Suppose wallet makes 2-3 payments per day, during the year the number 
+received or sent uses one or more new addresses. Suppose wallet makes 2-3 payments daily, during the year the number 
 of used addresses increases to about 1000 pieces. All addresses that were used at least once should be monitored
 for new payments. Assume in this BIP that a reasonable estimated number of wallet monitoring addresses is 10 000 pieces. 
 
-Key parameters that the new block filters correspond:
+The main block filter parameters that have been improved and redesigned in this BIP:
+
+
+==== Separating filters by address type ====
+
+Separating filters by address type, allows light client not to download redundant information without compromising privacy. It will significantly reduce global bandwidth usage, because the most of wallets are processing only one type of addresses.
+
+
+==== Transaction filters ====
+
+Using transaction filters makes it possible to use the advantages of filtering for unconfirmed transactions, as well as requesting only those transactions that are necessary for the light client when we have positive test in block filter.
+More details decribed here https://github.com/bitaps-com/bips/blob/master/bip-mempool-transactions-filters.mediawiki.
+
+
+==== Commitment ====
+
+This is one of the useful properties that filters should meet, filter construction should use deterministic algorithm to give ability publish commitment for filters like witness commitment is in an OP_RETURN output of the coinbase transaction. Adding the task of creating filters to the rules of consensus, forcing miners to create filters and make filters commitment, unlocks the protection of spv-nodes against payment-hiding attacks. At the current moment, lightweight clients  trust the nodes and rely on the fact that most nodes are honest.
+
+Adding block filters commitment to coinbase transaction, as the block validation rule will improve the lightweight client protocol by moving from trust to validation on consensus layer. Filters described here are fully adapted for this improvement but the filters commitment is beyond the scope of this BIP and may be added in a future soft fork.
+
 
 ==== Total filters size and false positive rate ====
 
@@ -39,24 +58,6 @@ Total filters size calcalted for range  0 -> 596,735 blocks.
 * <b>Batch 1008 blocks</b> total size: 3.4 Gb
 
 Batch filters size about 20% smaller than the BIP 158.
-
-
-==== Separating filters by address type ====
-
-Separating filters by address type, allows light client not to download redundant information without compromising privacy. It will significantly reduce global bandwidth usage, because the most of wallets are processing only one type of addresses.
-
-
-==== Commitment ====
-
-This is one of the useful properties that filters should meet, filter construction should use deterministic algorithm to give ability publish commitment for filters like witness commitment is in an OP_RETURN output of the coinbase transaction. Adding the task of creating filters to the rules of consensus, forcing miners to create filters and make filters commitment, unlocks the protection of spv-nodes against payment-hiding attacks. At the current moment, lightweight clients  trust the nodes and rely on the fact that most nodes are honest.
-
-Adding block filters commitment to coinbase transaction, as the block validation rule will improve the lightweight client protocol by moving from trust to validation on consensus layer. Filters described here are fully adapted for this improvement but the filters commitment is beyond the scope of this BIP and may be added in a future soft fork.
-
-==== Transaction filters ====
-
-Using transaction filters makes it possible to use the advantages of filtering for unconfirmed transactions, as well as requesting only those transactions that are necessary for the light client when we have positive test in block filters.
-More details decribed here https://github.com/bitaps-com/bips/blob/master/bip-mempool-transactions-filters.mediawiki.
-
 
 
 ==== Batching ====
@@ -75,7 +76,12 @@ Returning to the example above, if we are tracking a set of addresses <code>{A, 
 Using a batch approach with pointers to unique elements, described in detail below, we get a good degree of data compression. To encode 1 unique element (4 bytes in size) we need only 2.6 bytes and about 1.4 bytes to encode 1 duplicated element with a counter.
 
 
+==== Light client filters test perfomance ====
 
+BIP 158 filters use an array with the size of the elements <code>N * M</code> to map all possible block elements hashes. Where <code>N</code> count of elements in block and <code>M = 784931</code> constant represent <code>1/M</code> probabilty rate. In this case we are dealing with floating parameter <code>F = N * M</code> for Golomb coding, also BIP 158 use randomization vector for siphash function for each block. In other words, to check the block filter, we need to recalculate for each block a new array of addresses that are monitored by light wallet in accordance with the randomization vectors and the parameter <code>F</code>.
+In case we want rescan all blocks and check 10 000 addresses we have to calculate about 6 000 000 000 hash + map_into_range functions.
+
+In this BIP purposed shema with constat parameter <code> F = 2 ^ 32 </code> and dinamicaly calculated parameter <code>P</code> for Golomb coding. No randomization vectors for each block and constant <code>F</code> remove computation overhead with almost same false positive rate (false positive test slightly better than BIP 158). Also an additional speed improvement is related to fact that the design of divided filters into 2 parts allows us to check part 2 only for set of addresses that have a positive test in the first part filters within current batch. This reduces the number of elements to be checked by almost half.
 
 
 
