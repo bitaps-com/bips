@@ -88,7 +88,18 @@ In this BIP purposed shema with constat parameter <code> F = 2 ^ 32 </code> and 
 
 == Specification ==
 
-For each block, filters are derived containing sets of addresses associated with the block. Filter is probabilistic structure which matches all items in the set with probability 1, and matches other items with probability 1/M for some integer parameter M. <code>M = Z * K * L</code>, <code>Z</code> - number of monitoring addresses, <code>K</code> - number of blocks in batch, <code>L</code> - number of batches. In other words one false positive result within L batches with K blocks each, for set of Z addresses. This BIP use <code>M = 10,000 * 4,032 * 10</code>   To construct this probabilistic structure, a set of unique hashed elements is used, where the maximum bit length of the element determines the frequency of false positives. To reduce size of filter used Golomb-Rice coding the same schema like in BIP 158 and called Golomb-coded set - GCS.
+For each block, filters are derived containing sets of addresses associated with the block. Filter is probabilistic structure which matches all items in the set with probability 1, and matches other items with probability 1/M for some integer parameter M. In BIP 158 all block addresses map into set of distinct integers within the range <code>[0, F)</code>, where <code>F = N * M<code>, <code>N</code> is count of block elements and M is BIP 158 constant <code>M = 784931</code>.
+
+In this BIP used constant parameter <code>F= 2 ^ 32</code>. False positve test probability is <code> N / F </code>. For compression, the Golomb-Rice code with the parameter P is used, where P is determined for each filter based on the values in the set. This approach allows us to preserve the simplicity and speed of sets comparison process, exclude computation overhead for each set.
+
+
+
+
+
+
+For each block, filters are derived containing sets of addresses associated with the block.  Set of addresses is divided into 2 parts. The first part is unique block addresses within recent batch. 
+
+Filter is probabilistic structure which matches all items in the set with probability 1, and matches other items with probability 1/M for some integer parameter M. <code>M = Z * K * L</code>, <code>Z</code> - number of monitoring addresses, <code>K</code> - number of blocks in batch, <code>L</code> - number of batches. In other words one false positive result within L batches with K blocks each, for set of Z addresses. This BIP use <code>M = 10,000 * 4,032 * 10</code>   To construct this probabilistic structure, a set of unique hashed elements is used, where the maximum bit length of the element determines the frequency of false positives. To reduce size of filter used Golomb-Rice coding the same schema like in BIP 158 and called Golomb-coded set - GCS.
 
 At a high level, a GCS is constructed from a set of <code>N</code> items by:
 # hashing all items to 64-bit integers in the range <code>[0,  N * M)</code>
