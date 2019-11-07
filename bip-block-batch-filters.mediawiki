@@ -81,84 +81,56 @@ Using a batch approach with pointers to unique elements, described in detail bel
 BIP 158 filters use an array with the size of the elements <code>N * M</code> to map all possible block elements hashes. Where <code>N</code> count of elements in block and <code>M = 784931</code> constant represent <code>1/M</code> probabilty rate. In this case we are dealing with floating parameter <code>F = N * M</code> for Golomb coding, also BIP 158 use randomization vector for siphash function for each block. In other words, to check the block filter, we need to recalculate for each block a new array of addresses that are monitored by light wallet in accordance with the randomization vectors and the parameter <code>F</code>.
 In case we want rescan all blocks and check 10 000 addresses we have to calculate about 6 000 000 000 hash + map_into_range functions.
 
-In this BIP purposed shema with constat parameter <code> F = 2 ^ 32 </code> and dinamicaly calculated parameter <code>P</code> for Golomb coding. No randomization vectors for each block and constant <code>F</code> remove computation overhead with almost same false positive rate (false positive test slightly better than BIP 158). Also an additional speed improvement is related to fact that the design of divided filters into 2 parts allows us to check part 2 only for set of addresses that have a positive test in the first part filters within current batch. This reduces the number of elements to be checked by almost half.
-
-
+In this BIP purposed shema with constat parameter <code>F = 2 ^ 32</code> and dinamicaly calculated parameter <code>P</code> for Golomb coding. No randomization vectors for each block and constant <code>F</code> remove computation overhead with almost same false positive rate (false positive test slightly better than BIP 158). Also an additional speed improvement is related to fact that the design of divided filters into 2 parts allows us to check part 2 only for set of addresses that have a positive test in the first part filters within current batch. This reduces the number of elements to be checked by almost half.
 
 
 == Specification ==
 
-For each block, filters are derived containing sets of addresses associated with the block. Filter is probabilistic structure which matches all items in the set with probability 1, and matches other items with probability 1/M for some integer parameter M. In BIP 158 all block addresses map into set of distinct integers within the range <code>[0, F)</code>, where <code>F = N * M<code>, <code>N</code> is count of block elements and M is BIP 158 constant <code>M = 784931</code>.
+==== Filter types ====
 
-In this BIP used constant parameter <code>F= 2 ^ 32</code>. False positve test probability is <code> N / F </code>. For compression, the Golomb-Rice code with the parameter P is used, where P is determined for each filter based on the values in the set. This approach allows us to preserve the simplicity and speed of sets comparison process, exclude computation overhead for each set.
-
-
-
-
-
-
-For each block, filters are derived containing sets of addresses associated with the block.  Set of addresses is divided into 2 parts. The first part is unique block addresses within recent batch. 
-
-Filter is probabilistic structure which matches all items in the set with probability 1, and matches other items with probability 1/M for some integer parameter M. <code>M = Z * K * L</code>, <code>Z</code> - number of monitoring addresses, <code>K</code> - number of blocks in batch, <code>L</code> - number of batches. In other words one false positive result within L batches with K blocks each, for set of Z addresses. This BIP use <code>M = 10,000 * 4,032 * 10</code>   To construct this probabilistic structure, a set of unique hashed elements is used, where the maximum bit length of the element determines the frequency of false positives. To reduce size of filter used Golomb-Rice coding the same schema like in BIP 158 and called Golomb-coded set - GCS.
-
-At a high level, a GCS is constructed from a set of <code>N</code> items by:
-# hashing all items to 64-bit integers in the range <code>[0,  N * M)</code>
-# sorting the hashed values in ascending order
-# computing the differences between each value and the previous one
-# writing the differences sequentially, compressed with Golomb-Rice coding
-
-
-The hashing shema is same as BIP 158 except SipHash function parameter.
-
-==== Hashing Data Objects ====
-
-Siphash function used in BIP 158 is effective function computes 64-bit or 128-bit values from a variable-length message and 128-bit secret key. For a 128-bit secret key, the first 128-bit of block hash is used. Consequently the same element but in different blocks has a different hashes. As a result of this we have to recalculate all hashes for monitoring elements for each block what adds unnecessary computing overhead. 
-
-SipHash is fundamentally different from cryptographic hash functions like SHA and main goal is a produce message authentication code: a keyed hash function like HMAC. To create a probabilistic filter structure, an effective hash function with good uniform distribution is needed. MAC functionality is out of block filters task scope. Using a constant value of 128-bit key allows using sighash as a regular hash function and opens up the opportunity for filters batching.
-
-128-bit key <code>k</code> should be set to 0 for all filters.
-
-Siphash parameters: <code>k = 0</code> <code>c = 2</code> and <code>d = 4</code>.
-
-
-
-== Block Batch Filters ==
-
-This BIP defines list of  new filter types:
-
-Unique block addresses in batch range:
-
-* <code>P2PK+P2PKH - 0x01</code>
-* <code>P2SH  - 0x02</code>
-* <code>P2WPKH  - 0x04</code>
-* <code>P2WPSH  - 0x08</code>
-
-Duplicated block addresses in batch range:
-
-* <code>P2PK+P2PKH - 0x10</code>
-* <code>P2SH  - 0x20</code>
-* <code>P2WPKH  - 0x40</code>
-* <code>P2WPSH  - 0x80</code>
+* <code>P2PK - 0x01</code>
+* <code>P2PKH  - 0x02</code>
+* <code>P2SH  - 0x04</code>
+* <code>P2WPKH  - 0x08</code>
+* <code>P2WPSH  - 0x16</code>
 
 Filter types support filter combinations, that means in case we need block filters for all address types we should calculate
-0x01 + 0x02 + 0x04 + 0x08 + 0x10 + 0x20 + 0x40 + 0x80 = 0xff. To reduce bandwith usage light client should request 
-only unique addresses filters fisrt and only for affected block batches download duplicates.
+0x01 + 0x02 + 0x04 + 0x08 + 0x16 = 0x25. To reduce bandwidth usage, the light client should request only the necessary filter types. In case combined filter types are requested, the filters are serialized sequentially according to the type index.
 
-==== Filters contents ====
+==== Transaction filter ====
 
-The filters contain set of unique items  derived from transaction inputs and outputs hashes for standard script types (pubkey hashes, script hashes). Coinbase inputs are not used. This information is minimum sufficient for light wallet to sync blockchain. Script/Pubkey hashes is choosen instead of raw script because output script can’t be recovered for P2PK addresses in case no information about public key. This means that watch only wallet, with imported P2PK addresses from base58 format, not able to reconstruct output script without downloading transactions where this script was seen first time and will not be able to check filters.
+For each transaction filters are derived containing sets of uique addresses associated with transaction. Set of unique elements whose order does not matter coded with Golomb-Rice code. Details of Golomb-Rice coding the same as described below in Block filter. More details here https://github.com/bitaps-com/bips/blob/master/bip-mempool-transactions-filters.mediawiki.
 
-Each transaction has a set of UNIQUE address elements involved in it. The block filter consists of 2 parts. First part is hashed set with unuque elements within filter batch range. The second part is a set of duplicated elements plus a sequence with duplicate counters.
+
+==== Block filter ====
+For each block, filters are derived containing sets of addresses associated with the block transaction filters. Filter is probabilistic structure which matches all items in the set with probability 1, and matches other items with probability 1/M for some integer parameter M. In BIP 158 all block addresses map into set of distinct integers within the range <code>[0, F)</code>, where <code>F = N * M<code>, <code>N</code> is count of block elements and M is BIP 158 constant <code>M = 784931</code>.
+
+In this BIP used constant parameter <code>F= 2 ^ 32</code>. False positve test probability is <code>N / F</code>. For compression, the Golomb-Rice code with the parameter P is used, where P is determined for each filter based on the values in the set. This approach allows us to preserve the simplicity and speed of sets comparison process, exclude computation overhead for each set.
+
+All block addresses are divided by type of address and a separate filter is formed for each type of address. The filter consists of unique elements, duplicates in the form of pointers and a fingerprint of transaction filters. A transaction filter fingerprint is a hash from serialized block transaction filters. We need this fingerprint for the following purposes.
+In case we have positive test in block filter we can get transaction information in 2 ways. The first method is to request a complete block from the network, the second more effective is to request filters for all transactions of the block and determine the exact transaction that we must request from the network. 
+
+This BIP is fully adopted for block filters commitment and transaction filters fingerprint give for light client ability to verify transaction filters with commitment.
+
+The following example shows the need to use the fingerprint for transaction filters. Light client downloaded block filter and got positive test for monitoring address. Positive test means that one or more blcok transactions affected. Block filter could be verified via commitment (we assume that a filters commitment is a block validation rule), but when ligth client request block transaction filters we cant verify that received filters is correct and do not try to hide payments. Download transaction filters is about 40-60 kbyte of data instead of 1-1.2 MB complete block. 
+
+Light client can use block merkle root to determine that all transaction filters are received. But we can't verify content of this filters. Malicious node could craft transaction filters and show only 1 transaction instead of 2 or more. Because we have no counters of elements in block filters we can't determain this attack. Transaction filters fingerprint solve this problem by serializing transaction filters using a deterministic algorithm and obtain hash fingerprint from this data. In case fingerprint not match light client should request complete block and ban malicious node from connection pool.
 
 Block filter created as follows: 
 
-* first transaction set with UNIQUE elements compare with all block filters in batch include recently created block empty filter 
-* all unique items within the batch added to block filter set with unique elemets
-* all duplicates are added to the set with duplicate elements and a counter is incremented for each element of the duplicate
-* apply first 3 steps for each block transaction sequentially
+# serialize all block transaction filters and get fingerprint
+# create address set with block unique addresses within recent batch
+# create duplicates set with pointers for all duplicated addresses within recent batch
+# encode address set with Golomb coding
+# encode duplicates set with Golomb coding
+# serialize filter and get commitment hash
 
-It is important to delete duplicates within transaction sets and count duplicates within block set. This aproach give ability 
-to compare downloaded block filter  with set of transactions filters independently received one by one from mempool. Block filters verified by commitment and duplicates counter make it possible to unequivocally conclude that all transactions was received with correct filters. In case counters is not equal it means that the nodes that sent the transaction filters tried to hide payments from the light client. More details here https://github.com/bitaps-com/bips/blob/master/bip-mempool-transactions-filters.mediawiki.
+It is important to note that transaction filters consist only of unique elements, where uniqueness is determined within the transaction.
+
+
+==== Filter elements ====
+
+The filters elements derived from transaction inputs and outputs hashes for standard script types (pubkey hashes, script hashes). Coinbase inputs are not used. This information is minimum sufficient for light wallet to sync blockchain. Script/Pubkey hashes is choosen instead of raw script because output script can’t be recovered for P2PK addresses in case no information about public key. This means that watch only wallet, with imported P2PK addresses from base58 format, not able to reconstruct output script without downloading transactions where this script was seen first time and will not be able to check filters.
 
 
 ==== Filter structure ====
@@ -194,15 +166,28 @@ The first filters batch started from Genesis block and have initial value for <c
 
 This parameters is close to optimal<ref>https://gist.github.com/sipa/576d5f09c3b86c3b1b75598d799fc845</ref>.
 
-==== Duplicates counters ====
 
-Huffman coded sequence of duplicates counters. This sequence representing count of corresponding duplicated element. 
+
+
+==== Hashing Data Objects ====
+
+Siphash function used in BIP 158 is effective function computes 64-bit or 128-bit values from a variable-length message and 128-bit secret key. For a 128-bit secret key, the first 128-bit of block hash is used. Consequently the same element but in different blocks has a different hashes. As a result of this we have to recalculate all hashes for monitoring elements for each block what adds unnecessary computing overhead. 
+
+SipHash is fundamentally different from cryptographic hash functions like SHA and main goal is a produce message authentication code: a keyed hash function like HMAC. To create a probabilistic filter structure, an effective hash function with good uniform distribution is needed. MAC functionality is out of block filters task scope. Using a constant value of 128-bit key allows using sighash as a regular hash function and opens up the opportunity for filters batching.
+
+128-bit key <code>k</code> should be set to 0 for all filters.
+
+Siphash parameters: <code>k = 0</code> <code>c = 2</code> and <code>d = 4</code>.
+
+
+
+
+
 
 ==== Commitment structure ====
 
 A commitment is an important part of block filters for future consensus layer update, that provides protection against payment hiding for light clients. Without commitment light clients rely on the fact that most of the nodes in the network do not hide payments. Tha same asumption was in BIP37. To combat concealment of payments, light client must receive information from several independent nodes, but it still vulnerable for sybil attack. Adding block filters commitment to coinbase transaction, as the block validation rule will improve the lightweight client protocol by moving from trust to validation on consensus layer. 
 
-<img src=bip-block-batch-filters/commitment.png></img>
 
 Block filters commitment hash is merkle root of merkle tree structure, where tree leafs is GCS filter hashes linked with previous block GCS filter hashes. Linking to previous block hashes unlock ability to download batch of filter headers and one commitment from last block to verify all. In case we download commitments for each block, we get a lot of overhead because get a block commitment means that we need to load the coinbase transaction and all block transaction hashes to make sure that the coinbase transaction matches the merkle root.
 
