@@ -138,11 +138,11 @@ The filters elements derived from transaction inputs and outputs hashes for stan
 {|
 ! Field Name !! Type !! Size  || Purpose
 |-
-| number_elements_set_bytes || CompactSize || 1 - 5 bytes  || A variable length integer representing the size of the Golomb Coded Set with uniqie elements
+| elements_set_bytes || CompactSize || 1 - 5 bytes  || A variable length integer representing the size of the Golomb Coded Set with uniqie elements
 |-
 | elements || Binary blob || variable || GCS with unique  elements
 |-
-| number_duplicates_set_bytes || CompactSize || 1 - 5 bytes || A variable length integer representing the size of the GCS with  duplicate elements
+| duplicates_set_bytes || CompactSize || 1 - 5 bytes || A variable length integer representing the size of the GCS with  duplicate elements
 |-
 | duplicates || Binary blob || variable || GCS with  duplicate elements
 |-
