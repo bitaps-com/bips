@@ -138,23 +138,23 @@ The filters elements derived from transaction inputs and outputs hashes for stan
 {|
 ! Field Name !! Type !! Size  || Purpose
 |-
-| cumulative_address_count || CompactSize || 1 - 5 bytes  || Value exist only in first block filter in range of batch representing sum of all unique elements in previous batches. Genesis block filter has initial value 10,000
+| number_elements_set_bytes || CompactSize || 1 - 5 bytes  || A variable length integer representing the size of the GCS with uniqie elements
 |-
-| unique_items_count || CompactSize || 1 - 5 bytes || Count of filter unique elements
+| items_count || CompactSize || 1 - 5 bytes || Count of filter unique elements
 |-
-| number_unique_set_bytes || Binary blob || variable || A variable length integer representing the size of the GCS with uniqie elements
+| P parameter || CompactSize || 1 - 5 bytes || P parameter for Golomb coded set
 |-
-| unique_set || Binary blob || variable || GCS with unique  elements
-|-
-| duplicates_items_count || CompactSize || 1 - 5 bytes || Count of filter duplicate elements
+| Golomb coded set || Binary blob || variable || GCS with unique  elements
 |-
 | number_duplicates_set_bytes || CompactSize || 1 - 5 bytes || A variable length integer representing the size of the GCS with  duplicate elements
 |-
+| duplicates_items_count || CompactSize || 1 - 5 bytes || Count of filter duplicate elements
+|-
+| P parameter || CompactSize || 1 - 5 bytes || P parameter for Golomb coded set
+|-
 | duplicates_set || Binary blob || variable || GCS with  duplicate elements
 |-
-| number_duplicates_counters_bytes || CompactSize || 1 - 5 bytes || A variable length integer representing the length of the duplicates_counter sequnce.
-|-
-| duplicates_counters ||  Binary blob  || variable || Sequence of counters of duplicates
+| fingerprint ||  Binary blob  || 20 bytes || block transaction filters fingerprint
 |-
 |}
 
