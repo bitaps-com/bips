@@ -138,58 +138,25 @@ The filters elements derived from transaction inputs and outputs hashes for stan
 {|
 ! Field Name !! Type !! Size  || Purpose
 |-
-| number_elements_set_bytes || CompactSize || 1 - 5 bytes  || A variable length integer representing the size of the GCS with uniqie elements
+| number_elements_set_bytes || CompactSize || 1 - 5 bytes  || A variable length integer representing the size of the Golomb Coded Set with uniqie elements
 |-
-| items_count || CompactSize || 1 - 5 bytes || Count of filter unique elements
-|-
-| P parameter || CompactSize || 1 - 5 bytes || P parameter for Golomb coded set
-|-
-| Golomb coded set || Binary blob || variable || GCS with unique  elements
+| elements || Binary blob || variable || GCS with unique  elements
 |-
 | number_duplicates_set_bytes || CompactSize || 1 - 5 bytes || A variable length integer representing the size of the GCS with  duplicate elements
 |-
-| duplicates_items_count || CompactSize || 1 - 5 bytes || Count of filter duplicate elements
-|-
-| P parameter || CompactSize || 1 - 5 bytes || P parameter for Golomb coded set
-|-
-| duplicates_set || Binary blob || variable || GCS with  duplicate elements
+| duplicates || Binary blob || variable || GCS with  duplicate elements
 |-
 | fingerprint ||  Binary blob  || 20 bytes || block transaction filters fingerprint
 |-
 |}
-
-The first filters batch started from Genesis block and have initial value for <code>cumulative_address_count = 10,000</code>. Each subsequent block adds the number of unique elements in the previous to <code>cumulative_address_count</code>. GCS parameters for batch calculated from <code>cumulative_address_count</code>.
-
-<code>P = floor(log2( cumulative_address_count / 1.497137)) </code>
-
-<code>M = ceil(1.49713 * 2^P) </code>
-
-This parameters is close to optimal<ref>https://gist.github.com/sipa/576d5f09c3b86c3b1b75598d799fc845</ref>.
-
-
-
-
-==== Hashing Data Objects ====
-
-Siphash function used in BIP 158 is effective function computes 64-bit or 128-bit values from a variable-length message and 128-bit secret key. For a 128-bit secret key, the first 128-bit of block hash is used. Consequently the same element but in different blocks has a different hashes. As a result of this we have to recalculate all hashes for monitoring elements for each block what adds unnecessary computing overhead. 
-
-SipHash is fundamentally different from cryptographic hash functions like SHA and main goal is a produce message authentication code: a keyed hash function like HMAC. To create a probabilistic filter structure, an effective hash function with good uniform distribution is needed. MAC functionality is out of block filters task scope. Using a constant value of 128-bit key allows using sighash as a regular hash function and opens up the opportunity for filters batching.
-
-128-bit key <code>k</code> should be set to 0 for all filters.
-
-Siphash parameters: <code>k = 0</code> <code>c = 2</code> and <code>d = 4</code>.
-
 
 
 
 
 
 ==== Commitment structure ====
+TODO
 
-A commitment is an important part of block filters for future consensus layer update, that provides protection against payment hiding for light clients. Without commitment light clients rely on the fact that most of the nodes in the network do not hide payments. Tha same asumption was in BIP37. To combat concealment of payments, light client must receive information from several independent nodes, but it still vulnerable for sybil attack. Adding block filters commitment to coinbase transaction, as the block validation rule will improve the lightweight client protocol by moving from trust to validation on consensus layer. 
-
-
-Block filters commitment hash is merkle root of merkle tree structure, where tree leafs is GCS filter hashes linked with previous block GCS filter hashes. Linking to previous block hashes unlock ability to download batch of filter headers and one commitment from last block to verify all. In case we download commitments for each block, we get a lot of overhead because get a block commitment means that we need to load the coinbase transaction and all block transaction hashes to make sure that the coinbase transaction matches the merkle root.
 
 == Light client filter processing schema ==
 
