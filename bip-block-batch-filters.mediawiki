@@ -144,7 +144,7 @@ The filters elements derived from transaction inputs and outputs hashes for stan
 |-
 | duplicates_set_bytes || CompactSize || 1 - 5 bytes || A variable length integer representing the size of the GCS with  duplicate elements
 |-
-| duplicates || Binary blob || variable || GCS with  duplicate elements
+| duplicates || Binary blob || variable || GCS with  duplicates 
 |-
 | fingerprint ||  Binary blob  || 20 bytes || block transaction filters fingerprint
 |-
