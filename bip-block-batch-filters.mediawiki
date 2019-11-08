@@ -25,7 +25,7 @@ First of all let's determine reasonable number of addresses tracked by a light c
 To achieve privacy and security, wallets must follow the "no address reuse" rule. This means that each payment
 received or sent, uses one or more new addresses. Suppose wallet makes 2-3 payments daily, during the year the number 
 of used addresses increases to about 1000 pieces. All addresses that were used at least once should be monitored
-for new payments. Assume in this BIP that a reasonable estimated number of wallet monitoring addresses is 10 000 pieces. 
+for new payments. Assume in this BIP that a reasonable estimated number of wallet monitoring addresses is 10,000, which corresponds to 10 years of active use of the wallet.
 
 The main block filter parameters that have been improved and redesigned in this BIP:
 
