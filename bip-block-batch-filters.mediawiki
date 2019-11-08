@@ -27,6 +27,9 @@ received or sent, uses one or more new addresses. Suppose wallet makes 2-3 payme
 of used addresses increases to about 1000 pieces. All addresses that were used at least once should be monitored
 for new payments. Assume in this BIP that a reasonable estimated number of wallet monitoring addresses is 10,000, which corresponds to 10 years of active use of the wallet.
 
+We also assume that the proper wallet implementation that safeguards user privacy,  when requesting transaction, blocks or other data from the Bitcoin network uses the TOR network, and generate new ip and new identity for each request.
+
+
 The main block filter parameters that have been improved and redesigned in this BIP:
 
 
