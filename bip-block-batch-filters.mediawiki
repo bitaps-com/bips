@@ -105,40 +105,43 @@ In this BIP purposed shema with constat parameter <code>F = 2 ^ 32</code> and di
 
 Filter types support filter combinations, which means that in case we need block filters for all address types we should calculate 0x01 + 0x02 + 0x04 + 0x08 + 0x16 = 0x25. To reduce bandwidth usage, the light client should request only the necessary filter types. In case combined filter types are requested, the filters are serialized sequentially according to the type index.
 
+==== Filter elements ====
+
+The filters elements derived from transaction inputs and outputs hashes for standard script types (pubkey hashes, script hashes). Coinbase inputs are not used. This information is minimum sufficient for light wallet to sync blockchain. Script/Pubkey hashes is choosen instead of raw script because output script can’t be recovered for P2PK addresses in case no information about public key. This means that watch only wallet, with imported P2PK addresses from base58 format, not able to reconstruct output script without downloading transactions where this script was seen first time and will not be able to check filters.
+
+Filter is probabilistic structure which matches all items in the set with probability 1, and matches other items with probability 1/M for some integer parameter M. In BIP 158 all elements hashed with sipHash and map into set of distinct integers within the range <code>[0, F)</code>, where <code>F = N * M<code>, <code>N</code> is count of block elements and M is BIP 158 constant <code>M = 784931</code>.
+
+In this BIP used sipHash without randomization vectors. Implementations of this BIP MUST use the SipHash parameters c = 2 and d = 4 and 128-bit key k = 0. For mapping set of sipHash result integers within the range <code>[0, F)</code> used constant parameter <code>F= 2 ^ 32</code>. False positve probability is <code>N / F</code>. For compression, the Golomb-Rice code with the parameter P is used, where P is determined for each filter based on the values in the set. This approach allows us to preserve the simplicity and speed of sets comparison process, exclude computation overhead for each set.
+
+
 ==== Transaction filter ====
 
-For each transaction filters are derived containing sets of uique addresses associated with transaction. Set of unique elements whose order does not matter coded with Golomb-Rice code. Details of Golomb-Rice coding the same as described below in Block filter. More details here https://github.com/bitaps-com/bips/blob/master/bip-mempool-transactions-filters.mediawiki.
+For each transaction, filters are derived containing sets of unique elements from standard scripts associated with transaction. Set of unique elements are hashed with sipHash function and mapped into array with the size <code>F = 2 ^ 32</code>. After calculations, the elements are serialized into a byte string. More details descibed here https://github.com/bitaps-com/bips/blob/master/bip-mempool-transactions-filters.mediawiki.
 
 
 ==== Block filter ====
-For each block, filters are derived containing sets of addresses associated with the block transaction filters. Filter is probabilistic structure which matches all items in the set with probability 1, and matches other items with probability 1/M for some integer parameter M. In BIP 158 all block addresses map into set of distinct integers within the range <code>[0, F)</code>, where <code>F = N * M<code>, <code>N</code> is count of block elements and M is BIP 158 constant <code>M = 784931</code>.
 
-In this BIP used constant parameter <code>F= 2 ^ 32</code>. False positve test probability is <code>N / F</code>. For compression, the Golomb-Rice code with the parameter P is used, where P is determined for each filter based on the values in the set. This approach allows us to preserve the simplicity and speed of sets comparison process, exclude computation overhead for each set.
+For each block, filters are derived containing sets of elements associated with the block transaction filters. 
+All block standard scripts are divided by type of script and a separate filter is formed for each type. The filter consists of unique elements, duplicates in the form of pointers and a fingerprint of transaction filters. A transaction filter fingerprint is a hash from serialized block transaction filters. Fingerprint is used for the following purposes.
+In case we have positive test result in block filter we can get transaction information by 2 methods. The first method is to request a complete block from the bitcoin network, the second is more effective - request filters for all transactions of the block and determine the exact transaction that we must request from the network. Download transaction filters is about 40-60 kbyte of data instead of 1-1.2 MB complete block. 
 
-All block addresses are divided by type of address and a separate filter is formed for each type of address. The filter consists of unique elements, duplicates in the form of pointers and a fingerprint of transaction filters. A transaction filter fingerprint is a hash from serialized block transaction filters. We need this fingerprint for the following purposes.
-In case we have positive test in block filter we can get transaction information in 2 ways. The first method is to request a complete block from the network, the second more effective is to request filters for all transactions of the block and determine the exact transaction that we must request from the network. 
+This BIP is fully adopted for block filters commitment and transaction filters fingerprint give for light client ability to verify transaction filters with commitment. The following example shows the need to use the fingerprint for transaction filters.
 
-This BIP is fully adopted for block filters commitment and transaction filters fingerprint give for light client ability to verify transaction filters with commitment.
-
-The following example shows the need to use the fingerprint for transaction filters. Light client downloaded block filter and got positive test for monitoring address. Positive test means that one or more blcok transactions affected. Block filter could be verified via commitment (we assume that a filters commitment is a block validation rule), but when ligth client request block transaction filters we cant verify that received filters is correct and do not try to hide payments. Download transaction filters is about 40-60 kbyte of data instead of 1-1.2 MB complete block. 
+Light client downloaded block filter and got positive test result for monitoring address. Positive test means that one or more block transactions are affected. Block filter could be verified via commitment (we assume that a filters commitment already accepted as block validation rule), but when the light client requests transaction filters, we cannot be sure that the received filters are correct, and the sender node is not trying to hide payments. 
 
 Light client can use block merkle root to determine that all transaction filters are received. But we can't verify content of this filters. Malicious node could craft transaction filters and show only 1 transaction instead of 2 or more. Because we have no counters of elements in block filters we can't determain this attack. Transaction filters fingerprint solve this problem by serializing transaction filters using a deterministic algorithm and obtain hash fingerprint from this data. In case fingerprint not match light client should request complete block and ban malicious node from connection pool.
 
 Block filter created as follows: 
 
 # serialize all block transaction filters and get fingerprint
-# create address set with block unique addresses within recent batch
-# create duplicates set with pointers for all duplicated addresses within recent batch
-# encode address set with Golomb coding
+# create elements set with block unique elements within recent batch
+# create duplicates set with pointers for all duplicated elements within recent batch
+# encode elements set with Golomb coding
 # encode duplicates set with Golomb coding
 # serialize filter and get commitment hash
 
 It is important to note that transaction filters consist only of unique elements, where uniqueness is determined within the transaction.
 
-
-==== Filter elements ====
-
-The filters elements derived from transaction inputs and outputs hashes for standard script types (pubkey hashes, script hashes). Coinbase inputs are not used. This information is minimum sufficient for light wallet to sync blockchain. Script/Pubkey hashes is choosen instead of raw script because output script can’t be recovered for P2PK addresses in case no information about public key. This means that watch only wallet, with imported P2PK addresses from base58 format, not able to reconstruct output script without downloading transactions where this script was seen first time and will not be able to check filters.
 
 
 ==== Filter structure ====
