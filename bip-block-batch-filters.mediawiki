@@ -18,7 +18,7 @@ The filter construction proposed is an alternative to BIP 158 filters, with lowe
 
 == Motivation ==
 
-Block filters designed to help light clients analize block contents without downloading full blocks and minimize the expected bandwidth consumed. The main difference from the BIP 37 approach is the absence of privacy leakage and the Denial of Service (DoS) attack vector for nodes. BIP 158 defines initial filter type <code>basic</code>. This BIP proposed more effective and flexible alternative.
+Block filters designed to help light clients analize block contents without downloading full blocks and minimize the expected bandwidth consumed. The main difference from the BIP 37 approach is no privacy leakage and no Denial of Service (DoS) attack vector for nodes. BIP 158 defines initial filter type <code>basic</code>. This BIP proposed more effective and flexible alternative.
 
 First of all let's determine reasonable number of addresses tracked by a light client in most common case. We will use this value for false positive rate tests in this BIP.
 
