@@ -60,7 +60,7 @@ The frequency of false positives should not be high and provide effective filter
 Total filters size calcalted for range  0 -> 596,735 blocks.
 
 * <b>BIP 158</b> total size: 4.3 Gb
-* <b>Batch 1008 blocks</b> total size: 3.36 Gb
+* <b>Batch filters</b> total size: 3.36 Gb (batch size 1008 blocks)
 
 Batch filters size about 22% smaller than the BIP 158.
 
