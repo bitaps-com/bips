@@ -23,7 +23,7 @@ Block filters are designed to help light client analysis of block contents witho
 First of all let's determine reasonable number of addresses tracked by a light client in most common case. We will use this value for false positive rate tests in this BIP.
 
 To achieve privacy and security, wallets must follow the "no address reuse" rule. This means that each payment
-received or sent uses one or more new addresses. Suppose wallet makes 2-3 payments daily, during the year the number 
+received or sent, uses one or more new addresses. Suppose wallet makes 2-3 payments daily, during the year the number 
 of used addresses increases to about 1000 pieces. All addresses that were used at least once should be monitored
 for new payments. Assume in this BIP that a reasonable estimated number of wallet monitoring addresses is 10 000 pieces. 
 
