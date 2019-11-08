@@ -103,8 +103,7 @@ In this BIP purposed shema with constat parameter <code>F = 2 ^ 32</code> and di
 * <code>P2WPKH  - 0x08</code>
 * <code>P2WPSH  - 0x16</code>
 
-Filter types support filter combinations, that means in case we need block filters for all address types we should calculate
-0x01 + 0x02 + 0x04 + 0x08 + 0x16 = 0x25. To reduce bandwidth usage, the light client should request only the necessary filter types. In case combined filter types are requested, the filters are serialized sequentially according to the type index.
+Filter types support filter combinations, which means that in case we need block filters for all address types we should calculate 0x01 + 0x02 + 0x04 + 0x08 + 0x16 = 0x25. To reduce bandwidth usage, the light client should request only the necessary filter types. In case combined filter types are requested, the filters are serialized sequentially according to the type index.
 
 ==== Transaction filter ====
 
