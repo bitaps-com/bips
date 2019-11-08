@@ -48,9 +48,9 @@ The idea of transaction filters is to make it possible to take advantage of filt
 
 ==== Commitment ====
 
-This is one of the useful properties that filters should meet, filter construction should use deterministic algorithm to give ability create and publish commitment for filters like witness commitment is in an OP_RETURN output of the coinbase transaction. Adding the task of creating filters to the rules of consensus, forcing miners to create filters and make filters commitment for each block. This will unlocks the protection of spv-nodes against payment-hiding attacks. At the current moment, lightweight clients  trust the nodes and rely on the fact that most nodes are honest.
+This is one of the useful properties that filters should meet, filter construction should use deterministic algorithm to give ability create and publish commitment for filters like witness commitment is in an OP_RETURN output of the coinbase transaction. Adding the task of creating filters to the rules of consensus, forcing miners to create filters and make filters commitment for each block. This will unlocks the protection of spv-nodes against payment-hiding attacks. At the current moment, light clients  trust the nodes and rely on the fact that most nodes are honest.
 
-Adding block filters commitment to coinbase transaction, as the block validation rule will improve the lightweight client protocol by moving from trust to validation on consensus layer. Filters described here are fully adapted for this improvement but the filters commitment is beyond the scope of this BIP and may be added in a future soft fork.
+Adding block filters commitment to coinbase transaction, as the block validation rule will improve the light client protocol by moving from trust to validation on consensus layer. Filters described here are fully adapted for this improvement but the filters commitment is beyond the scope of this BIP and may be added in a future soft fork.
 
 
 ==== Total filters size and false positive rate ====
