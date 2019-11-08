@@ -82,7 +82,7 @@ Separation of unique elements and duplicates also gives some improvement in the 
 
 Returning to the example above, if we are tracking a set of addresses <code>{R, J, Q}</code> only starting after <code>Block 570</code>, we need to check the second part with duplicates. Starting from <code>Block 571</code>, we need to check only the one element <code>Q</code>, and then from <code>Block 572</code> we need to check set <code>{R, Q}</code> for each block duplicates. In other words, it’s enough for us to check for duplicates part only for set of affected monitoring elements in recent batch, in case false positive test element related to monitoring address also considered as affected.
 
-Using a batch approach with pointers to unique elements, described in detail below, we get a good degree of data compression. To encode 1 unique element (4 bytes in size) we need only 2.6 bytes and about 1.4 bytes to encode 1 duplicated element with a counter.
+Using a batch approach with pointers to unique elements, we got a good degree of data compression. On average to encode 1 unique element (4 bytes in size) we need only 2.59 bytes and about 1.29 bytes to encode 1 duplicated element, which together gives 1.98 bytes per block address element (compression rate 50.5%).
 
 
 ==== Light client filters test perfomance ====
