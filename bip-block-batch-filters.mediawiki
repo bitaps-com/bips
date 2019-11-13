@@ -195,7 +195,53 @@ Block filter created as follows:
 
 It is important to note that transaction filters consist only of unique elements, where uniqueness is determined within the transaction.
 
+Python example of filter creation:
+<pre>
+  # raw_elements - block inuque elements (standard script hashes) maped by filter type
+  # duplicates - block duplicates elements (standard script hashes) maped by filter type
+  # batch_map - dict with mapping unique items to index number
+  # element_index - last used index for unique item  maped by filter type
 
+  
+  for f_type in raw_elements:
+      if raw_elements[f_type]:
+          for x in raw_elements[f_type]:
+              batch_map[f_type][x] = element_index[f_type]
+              element_index[f_type] += 1
+          d = encode_gcs(raw_elements[f_type], sort=False)
+          f = b"".join([int_to_var_int(len(d)), d]
+      else:
+          f = int_to_var_int(0)
+
+      if duplicates[f_type]:
+          pointers_set = set()
+          # convert values to pointers
+          for x in duplicates[f_type]:
+              pointers_set.add(batch_map[f_type][x])
+
+          encoded_pointers= encode_gcs(pointers_set)
+          f +=  b"".join([int_to_var_int(len(encoded_pointers)),
+                          encoded_pointers])
+      else:
+          f += int_to_var_int(0)
+
+      if f != b"\x00\x00":
+          d = bytearray()
+          for i in sorted(tx_filters[f_type].keys()):
+              try:
+                  d += b"".join(tx_filters[f_type][i])
+              except:
+                  pass
+          f += ripemd160(sha256(d))
+
+      if last_hash[f_type]:
+          last_hash[f_type] = sha256(last_hash[f_type] + sha256(f))
+      elif f != b"\x00\x00":
+          last_hash[f_type] = sha256(b"\00" * 32 + sha256(f))
+
+      if last_hash[f_type]:
+          records.append((last_height, f_type, last_hash[f_type], f))
+</pre>
 
 ==== Filter structure ====
 
