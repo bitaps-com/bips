@@ -112,7 +112,7 @@ Filter is probabilistic structure which matches all items in the set with probab
 
 In this BIP used sipHash without randomization vectors. Implementations of this BIP MUST use the SipHash parameters c = 2 and d = 4 and 128-bit key k = 0. For mapping set of sipHash result integers within the range <code>[0, F)</code> used constant parameter <code>F= 2 ^ 32</code>. False positve probability is <code>N / F</code>. For compression, the Golomb-Rice code with the parameter P is used, where P is determined for each filter based on the values in the set. This approach allows us to preserve the simplicity and speed of sets comparison process, exclude computation overhead for each set.
 
-<code>
+<pre>
   def encode_gcs(elements, P = None, sort = True, deltas = True):
       gcs_filter = bitarray()
       gcs_filter_append = gcs_filter.append
@@ -164,7 +164,7 @@ In this BIP used sipHash without randomization vectors. Implementations of this 
               c -= 1
 
       return int_to_var_int(len(elements)) + int_to_var_int(P) + gcs_filter.tobytes()
-</code>
+</pre>
 
 ==== Transaction filter ====
 
