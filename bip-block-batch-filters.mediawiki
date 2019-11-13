@@ -163,7 +163,7 @@ It is important to note that transaction filters consist only of unique elements
 
 ==== Filter header ====
 
-Filter header defined as <code> header = SHA256(previous_header +  SHA256(serialized_block_filter) </code>. In case previous header not exist used 32 zero bytes as value. Chaining filter headers is another one adoption step for filter block  commitments softfork.  This allows to request coinbase transaction and merkle proof for this transaction only for the last block. Otherwise, we would have to download coinbase transaction for each block to be able verify block filters with commitment. Chained headers provide cryptographic proof of the validity of all previous filters in case last one is verified.
+Filter header defined as <code>header = SHA256(previous_header +  SHA256(serialized_block_filter))</code>. In case previous header not exist used 32 zero bytes as value. Chaining filter headers is another one adoption step for filter block  commitments softfork.  This allows to request coinbase transaction and merkle proof for this transaction only for the last block. Otherwise, we would have to download coinbase transaction for each block to be able verify block filters with commitment. Chained headers provide cryptographic proof of the validity of all previous filters in case last one is verified.
 
 
 ==== Commitment structure ====
