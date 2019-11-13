@@ -112,6 +112,59 @@ Filter is probabilistic structure which matches all items in the set with probab
 
 In this BIP used sipHash without randomization vectors. Implementations of this BIP MUST use the SipHash parameters c = 2 and d = 4 and 128-bit key k = 0. For mapping set of sipHash result integers within the range <code>[0, F)</code> used constant parameter <code>F= 2 ^ 32</code>. False positve probability is <code>N / F</code>. For compression, the Golomb-Rice code with the parameter P is used, where P is determined for each filter based on the values in the set. This approach allows us to preserve the simplicity and speed of sets comparison process, exclude computation overhead for each set.
 
+<code>
+def encode_gcs(elements, P = None, sort = True, deltas = True):
+    gcs_filter = bitarray()
+    gcs_filter_append = gcs_filter.append
+    if sort:
+        elements = sorted(elements)
+    if P is None:
+        if deltas:
+            last = 0
+            if len(elements) < 2:
+                d_max = elements[0]
+            else:
+                d_max = 0
+                new_elements = deque()
+                for value in elements:
+                    d = value - last
+                    new_elements.append(d)
+                    if last and d_max < d:
+                        d_max = d
+                    last = value
+                deltas = False
+                elements = new_elements
+        else:
+            d_max = max(elements)
+        if not sort:
+            mc = sorted(elements)[len(elements) // 2] # median high
+        else:
+            mc = elements[len(elements) // 2] # median high
+        d_max = d_max if d_max > 1 else 2
+        mc = mc if mc > 1 else 2
+        P = (floor(log2((mc / 1.497137))) + floor(log2((d_max / 1.497137)))) >> 1
+        if P < 1:
+            P = 1
+
+    last = 0
+    for value in elements:
+        if deltas:
+            e = value - last
+            last = value
+        else:
+            e = value
+        q, r = e >> P, e & ((1 << P) - 1)
+        while q:
+            gcs_filter_append(True)
+            q -= 1
+        gcs_filter_append(False)
+        c = P - 1
+        while c >= 0:
+            gcs_filter_append(bool(r & (1 << c)))
+            c -= 1
+
+    return int_to_var_int(len(elements)) + int_to_var_int(P) + gcs_filter.tobytes()
+</code>
 
 ==== Transaction filter ====
 
