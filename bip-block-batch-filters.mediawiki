@@ -224,9 +224,6 @@ Filter header defined as <code>header = SHA256(previous_header +  SHA256(seriali
 Block filters commitment this is merkle root from merkle tree constructed from filter headres. At example merkle tree until segwit softfork constructed from filter types: 0x01, 0x02, 0x04. After segwit softfork and first transaction with new standard script types we should construct merkle tree from next filer types:  0x01, 0x02, 0x04, 0x08, 0x16.  Merkle tree construction algorith is same as block transaction merkletree (double sha256 hash function, odd tree levels are normalized by duplicating the last hash)
 
 
-== Light client filter processing schema ==
-
-TODO
 
 == Compatibility ==
 
