@@ -157,7 +157,7 @@ It is important to note that transaction filters consist only of unique elements
 |-
 | duplicates || Binary blob || variable || GCS with  duplicates 
 |-
-| fingerprint ||  Binary blob  || 20 bytes || block transaction filters fingerprint
+| fingerprint ||  Binary blob  || 20 bytes || block transaction filters fingerprint (in case filter items not exists, this field is omitted)
 |-
 |}
 
