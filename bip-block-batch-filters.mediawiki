@@ -191,7 +191,7 @@ Block filter created as follows:
 # create duplicates set with pointers for all duplicated elements within recent batch
 # encode elements set with Golomb coding
 # encode duplicates set with Golomb coding
-# serialize filter and get commitment hash
+# serialize filter and get filter header
 
 It is important to note that transaction filters consist only of unique elements, where uniqueness is determined within the transaction.
 
