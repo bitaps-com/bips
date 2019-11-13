@@ -75,7 +75,7 @@ On the picture below shows the structure of the batch. Unique addresses for bloc
 
 <img src=bip-block-batch-filters/batchf.png></img>
 
-On picture <code>Block 2</code> have address <code>E</code> as duplicate element written as pointer 5. <code>Block 570</code> have addresses <code>G</code> and <code>E</code>  as duplicate elements written as pointers 6 and 5. In <code>Block 1567</code> shown duplicated element <code>J</code>, but this duplicated element is redundant and should be droped because our first part of filter have positive test for element <code>J</code>. 
+On picture <code>Block 2</code> have address <code>E</code> as duplicate element written as pointer 5. <code>Block 570</code> have addresses <code>G</code> and <code>E</code>  as duplicate element, written as pointers 6 and 5. In <code>Block 1567</code> shown duplicated element <code>J</code>, but this duplicated element is redundant and should be omitted because our first part of filter already have positive test for element <code>J</code>. 
 
 Separation of unique elements and duplicates also gives some improvement in the filter scanning speed, because checking the second part of the filter is only necessary if we have affected addresses in recent batch and we need check only small set of affected addresses.
 
