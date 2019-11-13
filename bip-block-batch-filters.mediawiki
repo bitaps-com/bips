@@ -169,7 +169,7 @@ Function to encode Golom-Rice code with option to determine P parameter:
 
 ==== Transaction filter ====
 
-For each transaction, filters are derived containing sets of unique elements from standard scripts associated with transaction. Set of unique elements are hashed with sipHash function and mapped into array with the size <code>F = 2 ^ 32</code>. After calculations, the elements are serialized into a byte string. More details descibed here https://github.com/bitaps-com/bips/blob/master/bip-mempool-transactions-filters.mediawiki.
+For each transaction, filters are derived containing sets of unique elements from standard scripts associated with transaction. Set of unique elements are hashed with sipHash function and mapped into array with the size <code>F = 2 ^ 32</code>. After calculations, the elements are serialized into a byte string. More details descibed here <ref>https://github.com/bitaps-com/bips/blob/master/bip-mempool-transactions-filters.mediawiki</ref>.
 
 
 ==== Block filter ====
