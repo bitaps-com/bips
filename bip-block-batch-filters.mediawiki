@@ -40,7 +40,7 @@ Separating filters by address type, allows light client not to download redundan
 
 ==== Transaction filters ====
 
-More details about transaction filter decribed here https://github.com/bitaps-com/bips/blob/master/bip-mempool-transactions-filters.mediawiki.
+More details about transaction filter described here https://github.com/bitaps-com/bips/blob/master/bip-mempool-transactions-filters.mediawiki.
 
 The idea of transaction filters is to make it possible to take advantage of filtering for unconfirmed transactions, as well as reduce bandwidth consumption when request only those transactions that are necessary for an light client when we have a positive test in a block filter.
 
