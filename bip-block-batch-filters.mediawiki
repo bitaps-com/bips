@@ -55,7 +55,7 @@ Adding block filters commitment to coinbase transaction, as the block validation
 
 ==== Total filters size and false positive rate ====
 
-The frequency of false positives should not be high and provide effective filtering to reduce bandwidth consumption, but to achieve this we must increase the information entropy of the elements, which leads to an increase in size. The most effective algorithm for data compression and the balance between the size of the filters and the number of false positives are the main tasks to be solved in this BIP.
+The frequency of false positives should not be high and provide effective filtering to reduce bandwidth consumption, but to achieve this we must increase the information entropy of the elements in filters, which leads to an increase in size. The most effective algorithm for data compression and the balance between the size of the filters and the number of false positives are the main tasks to be solved in this BIP.
 
 Total filters size calcalted for range  0 -> 596,735 blocks.
 
