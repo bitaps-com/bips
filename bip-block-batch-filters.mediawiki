@@ -67,8 +67,7 @@ Batch filters size about 22% smaller than the BIP 158.
 
 ==== Batching ====
 
-About 94% of all addresses recorded in bitcoin blockchain have zero balance at this moment, this means that at 
-least 2 records for 94% of addresses in blockchain. Each spent utxo have 1 creating and 1 spending records. The presence of duplicate elements is also due to the fact that many addresses are used several times.
+About 94% of all addresses recorded in bitcoin blockchain have zero balance at this moment, which means that at least 2 entries for 94% of addresses written in the block chain. Each spent utxo have 1 creating and 1 spending records. The presence of duplicate elements is also due to the fact that many addresses are used several times.
 
 Combining filters into batches of blocks makes it possible to reduce the size of filters. Dividing the filter into 2 parts allows encoding data more compactly. The first part is the unique addresses for the block in the batch. The second part is duplicate elements in the current block, which have already met in the first part of filters in the batch. But duplicates for unique elements of the current block are not recorded, since the entry test will be successfully passed in the first part of the block filter. 
 
