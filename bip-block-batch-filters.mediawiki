@@ -115,58 +115,50 @@ In this BIP used sipHash without randomization vectors. Implementations of this 
 Function to encode Golom-Rice code with option to determine P parameter:
 
 <pre>
-  def encode_gcs(elements, P = None, sort = True, deltas = True):
-      if len(elements) == 0:
-        return b""
-      gcs_filter = bitarray()
-      gcs_filter_append = gcs_filter.append
-      if sort:
-          elements = sorted(elements)
-      if P is None:
-          if deltas:
-              last = 0
-              if len(elements) < 2:
-                  d_max = elements[0]
-              else:
-                  d_max = 0
-                  new_elements = deque()
-                  for value in elements:
-                      d = value - last
-                      new_elements.append(d)
-                      if last and d_max < d:
-                          d_max = d
-                      last = value
-                  deltas = False
-                  elements = new_elements
-          else:
-              d_max = max(elements)
-          if not sort:
-              mc = sorted(elements)[len(elements) // 2] # median high
-          else:
-              mc = elements[len(elements) // 2] # median high
-          d_max = d_max if d_max > 1 else 2
-          mc = mc if mc > 1 else 2
-          # P as average value from median high and delta max
-          P = (floor(log2((mc / 1.497137))) + floor(log2((d_max / 1.497137)))) >> 1
-          if P < 1:
-              P = 1
-      last = 0
-      for value in elements:
-          if deltas:
-              e = value - last
-              last = value
-          else:
-              e = value
-          q, r = e >> P, e & ((1 << P) - 1)
-          while q:
-              gcs_filter_append(True)
-              q -= 1
-          gcs_filter_append(False)
-          c = P - 1
-          while c >= 0:
-              gcs_filter_append(bool(r & (1 << c)))
-              c -= 1
-      return int_to_var_int(len(elements)) + int_to_var_int(P) + gcs_filter.tobytes()
+def encode_gcs(elements):
+    if len(elements) == 0:
+      return b""
+    gcs_filter = bitarray()
+    gcs_filter_append = gcs_filter.append
+    elements = sorted(elements)
+    last = 0
+    if len(elements) < 2:
+        d_max = elements[0]
+    else:
+        d_max = 0
+        new_elements = deque()
+        for value in elements:
+            d = value - last
+            new_elements.append(d)
+            if last and d_max < d:
+                d_max = d
+            last = value
+        deltas = False
+        elements = new_elements
+    
+    median_high = elements[len(elements) // 2]
+    d_max = d_max if d_max > 1 else 2
+    median_high = median_high if median_high > 1 else 2
+    P = (floor(log2((mc / 1.497137))) + floor(log2((d_max / 1.497137)))) >> 1
+    if P < 1:
+        P = 1
+    last = 0
+    for value in elements:
+        if deltas:
+            e = value - last
+            last = value
+        else:
+            e = value
+        q, r = e >> P, e & ((1 << P) - 1)
+        while q:
+            gcs_filter_append(True)
+            q -= 1
+        gcs_filter_append(False)
+        c = P - 1
+        while c >= 0:
+            gcs_filter_append(bool(r & (1 << c)))
+            c -= 1
+    return int_to_var_int(len(elements)) + int_to_var_int(P) + gcs_filter.tobytes()
 </pre>
 
 ==== Transaction filter ====
@@ -200,11 +192,11 @@ It is important to note that transaction filters consist only of unique elements
 Python code example of filter creation:
 
 <pre>
-  # elements - set of block inuque elements calculated with map_into_range(siphash(address_hash),  F)) 
-  # duplicates - set of block duplicates elements calculated with map_into_range(siphash(address_hash),  F)) 
-  # batch_map - dict with mapping unique items to index number
-  # last_hash - previous block filter header hash
-  # tx_filters - dict with transaction serialized filters mapped to tx block index
+# elements - set of block inuque elements calculated with map_into_range(siphash(address_hash),  F)) 
+# duplicates - set of block duplicates elements calculated with map_into_range(siphash(address_hash),  F)) 
+# batch_map - dict with mapping unique items to index number
+# last_hash - previous block filter header hash
+# tx_filters - dict with transaction serialized filters mapped to tx block index
 
 def create_filter(elements, duplicates,  batch_map, last_hash, tx_filters):
   d = encode_gcs(elements)
