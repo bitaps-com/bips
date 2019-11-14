@@ -200,11 +200,11 @@ It is important to note that transaction filters consist only of unique elements
 Python code example of filter creation:
 
 <pre>
-  # elements - block inuque elements calculated with map_into_range(siphash(address_hash),  F)) 
-  # duplicates - block duplicates elements calculated with map_into_range(siphash(address_hash),  F)) 
+  # elements - set of block inuque elements calculated with map_into_range(siphash(address_hash),  F)) 
+  # duplicates - set of block duplicates elements calculated with map_into_range(siphash(address_hash),  F)) 
   # batch_map - dict with mapping unique items to index number
   # last_hash - previous block filter header hash
-  # tx_filters - transaction serialized filters mapped to tx block index
+  # tx_filters - dict with transaction serialized filters mapped to tx block index
 
 def create_filter(elements, duplicates,  batch_map, last_hash, tx_filters):
   d = encode_gcs(elements)
