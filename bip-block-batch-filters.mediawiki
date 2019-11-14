@@ -116,6 +116,8 @@ Function to encode Golom-Rice code with option to determine P parameter:
 
 <pre>
   def encode_gcs(elements, P = None, sort = True, deltas = True):
+      if len(elements) == 0:
+        return b""
       gcs_filter = bitarray()
       gcs_filter_append = gcs_filter.append
       if sort:
@@ -198,44 +200,37 @@ It is important to note that transaction filters consist only of unique elements
 Python code example of filter creation:
 
 <pre>
-  # raw_elements - block inuque elements (standard script hashes) 
-  # duplicates - block duplicates elements (standard script hashes) 
+  # elements - block inuque elements calculated with map_into_range(siphash(address_hash),  F)) 
+  # duplicates - block duplicates elements calculated with map_into_range(siphash(address_hash),  F)) 
   # batch_map - dict with mapping unique items to index number
-  # element_index - last used index for unique item
   # last_hash - previous block filter header hash
   # tx_filters - transaction serialized filters mapped to tx block index
 
-  if raw_elements:
-      for x in raw_elements:
-          batch_map[x] = element_index
-          element_index += 1
-      d = encode_gcs(raw_elements)
-      filter = b"".join([int_to_var_int(len(d)), d]
-  else:
-      filter = int_to_var_int(0)
+def create_filter(elements, duplicates,  batch_map, last_hash, tx_filters):
+  d = encode_gcs(elements)
+  block_filter = b"".join([int_to_var_int(len(d)), d]
 
-  if duplicates:
-      pointers_set = set()
-      # convert values to pointers
-      for x in duplicates:
-          pointers_set.add(batch_map[x])
-          
-      p = encode_gcs(pointers_set)
-      filter +=  b"".join([int_to_var_int(len(encoded_pointers)), p])
-  else:
-      filter += int_to_var_int(0)
+  pointers_set = set()
+  # convert values to pointers
+  for e in duplicates:
+      pointers_set.add(batch_map[e])
 
-  if filter != b"\x00\x00":
+  p = encode_gcs(pointers_set)
+  block_filter +=  b"".join([int_to_var_int(len(encoded_pointers)), p])
+
+  if block_filter != b"\x00\x00":
       # calculate transaction filters fingerprint
       d = bytearray()
       for i in sorted(tx_filters.keys()):
          d += b"".join(tx_filters[i])
-      filter += ripemd160(sha256(d))
+      block_filter += ripemd160(sha256(d))
 
   if last_hash:
-      last_hash = sha256(last_hash + sha256(filter))
+      header_hash = sha256(last_hash + sha256(block_filter))
   elif f != b"\x00\x00":
-      last_hash = sha256(b"\00" * 32 + sha256(filter))
+      header_hash = sha256(b"\00" * 32 + sha256(block_filter))
+      
+  return header_hash, block_filter
 
 </pre>
 
