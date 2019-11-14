@@ -195,52 +195,48 @@ Block filter created as follows:
 
 It is important to note that transaction filters consist only of unique elements, where uniqueness is determined within the transaction.
 
-Python example of filter creation:
+Python code example of filter creation:
+
 <pre>
-  # raw_elements - block inuque elements (standard script hashes) maped by filter type
-  # duplicates - block duplicates elements (standard script hashes) maped by filter type
+  # raw_elements - block inuque elements (standard script hashes) 
+  # duplicates - block duplicates elements (standard script hashes) 
   # batch_map - dict with mapping unique items to index number
-  # element_index - last used index for unique item  maped by filter type
+  # element_index - last used index for unique item
+  # last_hash - previous block filter header hash
+  # tx_filters - transaction serialized filters mapped to tx block index
 
-  
-  for f_type in raw_elements:
-      if raw_elements[f_type]:
-          for x in raw_elements[f_type]:
-              batch_map[f_type][x] = element_index[f_type]
-              element_index[f_type] += 1
-          d = encode_gcs(raw_elements[f_type], sort=False)
-          f = b"".join([int_to_var_int(len(d)), d]
-      else:
-          f = int_to_var_int(0)
+  if raw_elements:
+      for x in raw_elements:
+          batch_map[x] = element_index
+          element_index += 1
+      d = encode_gcs(raw_elements)
+      filter = b"".join([int_to_var_int(len(d)), d]
+  else:
+      filter = int_to_var_int(0)
 
-      if duplicates[f_type]:
-          pointers_set = set()
-          # convert values to pointers
-          for x in duplicates[f_type]:
-              pointers_set.add(batch_map[f_type][x])
+  if duplicates:
+      pointers_set = set()
+      # convert values to pointers
+      for x in duplicates:
+          pointers_set.add(batch_map[x])
+          
+      p = encode_gcs(pointers_set)
+      filter +=  b"".join([int_to_var_int(len(encoded_pointers)), p])
+  else:
+      filter += int_to_var_int(0)
 
-          encoded_pointers= encode_gcs(pointers_set)
-          f +=  b"".join([int_to_var_int(len(encoded_pointers)),
-                          encoded_pointers])
-      else:
-          f += int_to_var_int(0)
+  if filter != b"\x00\x00":
+      # calculate transaction filters fingerprint
+      d = bytearray()
+      for i in sorted(tx_filters.keys()):
+         d += b"".join(tx_filters[i])
+      filter += ripemd160(sha256(d))
 
-      if f != b"\x00\x00":
-          d = bytearray()
-          for i in sorted(tx_filters[f_type].keys()):
-              try:
-                  d += b"".join(tx_filters[f_type][i])
-              except:
-                  pass
-          f += ripemd160(sha256(d))
+  if last_hash:
+      last_hash = sha256(last_hash + sha256(filter))
+  elif f != b"\x00\x00":
+      last_hash = sha256(b"\00" * 32 + sha256(filter))
 
-      if last_hash[f_type]:
-          last_hash[f_type] = sha256(last_hash[f_type] + sha256(f))
-      elif f != b"\x00\x00":
-          last_hash[f_type] = sha256(b"\00" * 32 + sha256(f))
-
-      if last_hash[f_type]:
-          records.append((last_height, f_type, last_hash[f_type], f))
 </pre>
 
 ==== Filter structure ====
