@@ -365,14 +365,6 @@ For <code>cfheaders</code> requests where a single or combination of several typ
 # BatchHeaders MUST have as many records for each block as the number of filter types requested on the chain terminating in StopHash. Entries MUST be the filter headers for the last block of each batch for requested types in ascending order of filter type and block height.
 
 
-
-== Light client operation ==
-
-TODO
-
-== Rationale ==
-TODO
-
 == Compatibility ==
 
 Older clients remain fully compatible and interoperable after this change. 
@@ -381,7 +373,9 @@ Clients which do not implement this BIP remain fully compatible after this chang
 additional node service and changes not affected to exist protocol.
 
 == Reference Implementation ==
-TODO
+
+https://github.com/bitaps-com/btcapiserver/blob/master/app/modules/filter_compressor.py
+
 
 == References ==
 
