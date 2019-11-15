@@ -298,7 +298,7 @@ For <code>cfheaders</code> requests where a single or combination of several typ
 
 <code>getcfcheckpt/cfcheckpt</code> messages is incompatible with this BIP.
 
-==== New messages messages getcfbheaders/cfbheaders ====
+==== New messages getcfbheaders/cfbheaders ====
 
 ===== getcfbheaders =====
 
