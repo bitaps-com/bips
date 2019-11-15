@@ -41,7 +41,7 @@ ID length filed define length of transaction ID is 6 bytes means short transacti
 {|class="wikitable"
 ! Field Size !! Description !! Data type !! Comments
 |-
-| 1-5  || filter type || var_int || Applied filter types
+| 1  || filter type || byte  || Applied filter types
 |-
 | 1-5 || Elements count || var_int || Number of transaction IDs entries
 |-
