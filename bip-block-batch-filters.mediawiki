@@ -97,6 +97,12 @@ In this BIP purposed shema with constat parameter <code>F = 2 ^ 32</code> and di
 ''CompactSize'' is a compact encoding of unsigned integers used in the Bitcoin
 P2P protocol.
 
+''Bit streams'' are readable and writable streams of individual bits. The
+following functions are used in the pseudocode in this document:
+* <code>bitarray()</code> instantiates a new writable bit stream
+* <code>bitarray.append(b)</code>  appends the bit <code>b</code> to the end of the stream
+* <code>bitarray.tobytes()</code> return bytes string from bit stream
+
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in RFC 2119.
