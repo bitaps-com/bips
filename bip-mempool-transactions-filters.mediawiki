@@ -104,7 +104,7 @@ light client.
 
 On fisrt part shown how light client respond for new transactions announces, requesting transaction filters that are significantly smaller than the transactions themselves. In case positive test on received filter, light client request full transaction data.
 
-The second part shows the process of synchronizing a new block. Full node send <code>cmpctblock</code> message with block header and short transaction IDs. Light client request missed transaction filters {C,D,E} then request transactions affected in filters {E} and coinbase transaction. We need coinbase transaction downloaded to retrive witness commitment and block filters commitment. In case light client uses filter only certain types one additional comunication round required with message <code>getcfproof</code> to retrive merkle proof to filter commitment.
+The second part shows the process of synchronizing a new block. Full node send <code>cmpctblock</code> message with block header and short transaction IDs. Light client request missed transaction filters {C, D, E}, then request transactions affected in filters {E} and coinbase transaction. We need coinbase transaction downloaded to retrive witness commitment and block filters commitment. In case light client uses filter only certain types one additional comunication round required with message <code>getcfproof</code> to retrive merkle proof to filter commitment.
 
 Last step is construct block filters from transactions filters and calculate commitment using merkle proof. Calculated commitment and commitment from coinbase transactions MUST be the same. In case this condition is not met, this means that same transaction filters hiding payments. In this situation light client MUST download full block, find transaction with invalid filters and ban malicious node who sent this.
 
@@ -115,18 +115,20 @@ Described schema in part of commitment verification, works only if commitment in
 
 This BIP defines list of transaction filter types:
 
-Unique transaction addresses:
+* <code>P2PK - 1</code>
+* <code>P2PKH - 2</code>
+* <code>P2SH - 4</code>
+* <code>P2WPKH - 8</code>
+* <code>P2WPSH - 16</code>
 
-* <code>P2PK+P2PKH - 0x01</code>
-* <code>P2SH - 0x02</code>
-* <code>P2WPKH - 0x04</code>
-* <code>P2WPSH - 0x08</code>
+Filter types support filter combinations and script types correspond BIP-Block-Batch-Filters
 
-Filter types support filter combinations and addreess types correspond BIP-Block-Batch-Filters
 
 ==== Filters contents ====
 
-Transaction filters contain set of UNIQUE items derived from transaction inputs and outputs hashes for standard script types (pubkey hashes, script hashes). Coinbase inputs are not used. 
+Transaction filters contain set of UNIQUE items derived from transaction inputs and outputs hashes for standard script types (pubkey hashes, script hashes). Coinbase inputs are not used. This information is minimum sufficient for light wallet to sync blockchain. Script/Pubkey hashes is choosen instead of raw script because output script can’t be recovered for P2PK addresses in case no information about public key. This means that watch only wallet, with imported P2PK addresses from base58 format, not able to reconstruct output script without downloading transactions where this script was seen first time and will not be able to check filters.
+
+For each filter element (Script/Pubkey hash) applied sipHash function and result mapped into range  [0, F). Implementations of this BIP MUST use the SipHash parameters c = 2 and d = 4 and 128-bit key k = 0. For mapping set of sipHash result integers within the range [0, F) used constant parameter F= 2 ^ 32 and function map_into_range, the same as used in BIP 158. All filter elements then are in ascending order and serialize to byte string where each element represented as 4 bytes.
 
 
 ==== Filter structure ====
@@ -134,14 +136,11 @@ Transaction filters contain set of UNIQUE items derived from transaction inputs 
 {|
 ! Field Name !! Type !! Size  || Purpose
 |-
-| tx_id || CompactSize || bytes[32]  || full 256-bit transaction id
+| number_of_filter_bytes || var_int ||  1 - 5 bytes || A variable length integer representing the size of the transaction filter in bytes
 |-
-| number_unique_set_bytes || var_int ||  1 - 5 bytes || A variable length integer representing the size of the GCS with uniqie elements
-|-
-| unique_set || Binary blob || variable || GCS with unique  elements
+| filter || Binary blob || variable || serialized filter elements
 |}
 
-GCS parameters for filters is same as for current blocks batch filter.
 
 == Compatibility ==
 
