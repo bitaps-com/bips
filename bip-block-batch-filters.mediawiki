@@ -92,6 +92,16 @@ In case we want rescan all blocks and check 10 000 addresses we have to calculat
 In this BIP purposed shema with constat parameter <code>F = 2 ^ 32</code> and dinamicaly calculated parameter <code>P</code> for Golomb coding. No randomization vectors for each block and constant <code>F</code> remove computation overhead with almost same false positive rate (false positive test result slightly better than BIP 158). Also an additional speed improvement is related to fact that the design of divided filters into 2 parts allows us to check part 2 only for set of addresses that have a positive test in the first part of filters within current batch. This reduces the number of elements to be checked by almost half.
 
 
+== Definitions ==
+
+''CompactSize'' is a compact encoding of unsigned integers used in the Bitcoin
+P2P protocol.
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
+interpreted as described in RFC 2119.
+
+
 == Specification ==
 
 ==== Filter types ====
@@ -250,11 +260,11 @@ Filter header defined as <code>header = SHA256(previous_header +  SHA256(seriali
 
 ==== Commitment structure ====
 
-Block filters commitment this is merkle root from merkle tree constructed from filter headres. At example merkle tree until segwit softfork constructed from filter types: 0x01, 0x02, 0x04. After segwit softfork and first transaction with new standard script types we should construct merkle tree from next filer types:  0x01, 0x02, 0x04, 0x08, 0x16.  Merkle tree construction algorith is same as block transaction merkletree (double sha256 hash function, odd tree levels are normalized by duplicating the last hash)
+Block filters commitment this is merkle root from merkle tree constructed from filter headers. At example merkle tree until segwit softfork constructed from filter types: 0x01, 0x02, 0x04. After segwit softfork and first transaction with new standard script types we should construct merkle tree from next filer types:  0x01, 0x02, 0x04, 0x08, 0x16.  Merkle tree construction algorith is same as block transaction merkletree (double sha256 hash function, odd tree levels are normalized by duplicating the last hash)
 
 == Node operation ==
 
-TODO
+Changes and additions to BIP 157 Node Operations. 
 
 == Light client operation ==
 
