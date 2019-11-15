@@ -35,8 +35,8 @@ for light clients instead of loading full blocks, simply request short transacti
 
 ==== gettxfilters ====
 
-The gettxfilter message is used to request transactions by transaction IDs with the specified filter types to apply. 
-ID length filed define length of transaction ID is 6 bytes means short transactions IDs as defined in BIP 152. Filter types defined in BIP-block-batch-filters.
+The gettxfilter message is used to request transactions filter by transaction IDs with the specified filter types to apply. 
+Transaction ID is 6 bytes means short transactions IDs as defined in BIP 152. Filter types defined in BIP-block-batch-filters.
 
 {|class="wikitable"
 ! Field Size !! Description !! Data type !! Comments
@@ -58,22 +58,23 @@ ID length filed define length of transaction ID is 6 bytes means short transacti
 |-
 | 32 || transaction ID || byte[32] || Full transaction ID 
 |-
-| 1-5 || filter size || var_int || Filter length in bytes
+| 1  || filter type || byte  || Applied filter types
 |-
-| variable  || filter || byte[] || GCS filter
+| variable  || filter || byte[] || transaction filter
 |}
 
-Filter types defined in BIP-block-batch-filters and determine which data is included in a transaction filters.
-
+<code>filter type</code> may not be the same as requested MUST contains only combinations of requested and existed filters in requested transaction.
 
 ==== getcfproof ====
 
-The getcfproof message is used to request merkle proof to verify commitment as merkle root of merkle tree constructed from headers of all types of filters. In case the light client downloads all types filters and keep information about the prevoius block filters, the commitment can be calculated independently.
+The getcfproof message is used to request merkle proof to verify commitment as merkle root of merkle tree constructed from headers of all types of filters. In case the light client downloads all types filters and keep information about the previous block filters, the commitment can be calculated independently.
 
 {|class="wikitable"
 ! Field Size !! Description !! Data type !! Comments
 |-
 | 1-5  || filter type || var_int || Filter types
+|-
+| 32 . || block hash || byte[32] || Block hash
 |}
 
 ==== cfproof ====
