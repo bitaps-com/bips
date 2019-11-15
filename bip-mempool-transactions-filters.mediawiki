@@ -72,19 +72,21 @@ The getcfproof message is used to request merkle proof to verify commitment as m
 {|class="wikitable"
 ! Field Size !! Description !! Data type !! Comments
 |-
-| 1-5  || filter type || var_int || Filter types
-|-
-| 32 . || block hash || byte[32] || Block hash
+| 32  || block hash || byte[32] || Block hash
 |}
 
 ==== cfproof ====
 
-Merkle proof is sequence of 32 byte hashes necessary to build the path to the root from requested fiter types.
+Compact filters proof is sequence of 32 byte hashes necessary to build merkle tree. Merkle root from constructed merkle tree 
+is block filters commitment.
 
 {|class="wikitable"
 ! Field Size !! Description !! Data type !! Comments
 |-
-| variable  || merkle proof || byte[] || sequence of 32 byte hashesh necessary to build the path to root 
+| 32  || block hash || byte[32] || Block hash
+|-
+| 1  || filter type || byte  || Filter types for merkle tree
+| variable  || filter headers || byte[] || sequence of 32 byte headers necessary to build merkle tree
 |}
 
 
