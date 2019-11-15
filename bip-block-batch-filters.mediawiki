@@ -181,10 +181,11 @@ def encode_gcs(elements):
 
 For each transaction, filters are derived containing sets of unique elements from standard scripts associated with transaction. Set of unique elements are hashed with sipHash function and mapped into array with the size <code>F = 2 ^ 32</code>. After calculations, the elements are serialized into a byte string. More details descibed here <ref>https://github.com/bitaps-com/bips/blob/master/bip-mempool-transactions-filters.mediawiki</ref>.
 
+
 ==== Filters batch size ====
 
 The most optimal value of the batche size obtained during testing of various sizes is about 1000 blocks per batch. Increasing the size of the batch leads to an increase in the number of duplicates and an increase in the range of values of pointers to unique elements. This leads to an increase in the size of the compressed pointer to the element and an increase in the compressed size of the element itself since delta coding is more effective when there are more elements. For a more compatible design with BIP 157, a value of 1000 blocks is definitely. Implementation of this BIP MUST use 1000 blocks per batch.
- 
+
 
 ==== Block filter ====
 
@@ -274,7 +275,7 @@ Block filters commitment this is merkle root from merkle tree constructed from f
 
 == Full Node operation ==
 
-This BIP is intended for use in the BIP 157 lightweight client protocol, but some features of this BIP will add certain rules to the protocol.
+This BIP is intended for use in the BIP 157 lightweight client protocol, but some features of this BIP will add certain rules to the protocol. Below described additions to BIP 157 protocol. 
 
 Full nodes that support this BIP MUST generate filters of all types described in this BIP. This need is due to the fact that this BIP means full adaptation to the possible future bitcoin protocol changes where filter commitment will be accepted as one of the consensus rules of block validation. In order to create a filter commitment, nodes needs to calculate the merkle root from the filter headers of all types described in this BIP; when adding new filter types in the future, this requirement SHOULD apply to all subsequent filter types.
 
@@ -292,6 +293,78 @@ For <code>cfheaders</code> requests where a single or combination of several typ
 
 * <code>FilterHashes</code> entries MUST be the merkle root from merkle tree constructed from filter headers(means calculated header not hash from serialized filer) for specified types. Block filter headers  used to construct merkle tree is  in ascending order by filter type number. 
 * <code>FilterType</code> may not be the same as requested and MUST contains only combinations of requested and existed filters in requested range of blocks.
+
+==== getcfcheckpt/cfcheckpt messages ====
+
+<code>getcfcheckpt/cfcheckpt</code> messages is incompatible with this BIP.
+
+==== New messages messages getcfbheaders/cfbheaders ====
+
+===== getcfbheaders =====
+
+<code>getcfbheaders</code> is used to request batch headers for specified block filter types. Batch filters header - this is filter header for last block in batch. Clients may use this message to get starting point for batch and to be able reconstruct filter headers for all subsequent blocks. At example node not save all blocks and block filter headers, to start verification for headers required to know previous block filter header for each filter type.
+
+<code>getcfbheaders</code> message contains the following fields:
+
+{| class="wikitable"
+! Field Name
+! Data Type
+! Byte Size
+! Description
+|-
+| FilterType
+| byte
+| 1
+| Filter types for which headers are requested
+|-
+| StartHeight
+| uint32
+| 4
+| The height of the start block 
+|-
+| StopHash
+| [32]byte
+| 32
+| The hash of the last block in the chain that headers are requested for
+|}
+
+# Nodes SHOULD NOT send <code>getcfbatch</code> unless the peer has signaled support for this BIP. Nodes receiving <code>getcfbatch</code> with an unsupported BIP SHOULD NOT respond.
+# StopHash MUST be known to belong to a block accepted by the receiving peer. This is the case if the peer had previously sent a <code>headers</code> or <code>inv</code> message with any descendent blocks. A node that receives <code>getcfbatch</code> with an unknown StopHash SHOULD NOT respond.
+
+===== cfbheaders =====
+<code>cfbheaders</code> is sent in response to <code>getcfbheaders</code>. The response included are the set of all batch filter headers on the requested chain. The message contains the following fields:
+
+{| class="wikitable"
+! Field Name
+! Data Type
+! Byte Size
+! Description
+|-
+| FilterType
+| byte
+| 1
+| Filter types for which batch headers are requested
+|-
+| StopHash
+| [32]byte
+| 32
+| The hash of the last block in the chain that headers are requested for
+|-
+| BatchHeadersLength
+| CompactSize
+| 1-3
+| The length of the following vector of filter headers
+|-
+| BatchHeaders
+| [][32]byte
+| BatchHeadersLength * 32 * count of types
+| The batch headers 
+|}
+
+# The FilterType and StopHash SHOULD match the fields in the <code>getcfbheaders</code> request.
+# BatchHeaders MUST have as many records for each block as the number of filter types requested on the chain terminating in StopHash. Entries MUST be the filter headers for the last block of each batch for requested types in ascending order of filter type and block height.
+
+
 
 == Light client operation ==
 
