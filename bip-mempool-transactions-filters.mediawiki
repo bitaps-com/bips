@@ -86,6 +86,7 @@ is block filters commitment.
 | 32  || block hash || byte[32] || Block hash
 |-
 | 1  || filter type || byte  || Filter types for merkle tree
+|-
 | variable  || filter headers || byte[] || sequence of 32 byte headers necessary to build merkle tree
 |}
 
