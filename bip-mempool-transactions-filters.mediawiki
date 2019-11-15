@@ -35,13 +35,11 @@ for light clients instead of loading full blocks, simply request short transacti
 
 ==== gettxfilters ====
 
-The gettxfilter message is used to request transactions by transaction IDs with the specified filters to apply. 
-ID length filed define length of transaction ID in bytes, 32 bytes means full 256-bit transaction ID, 6 bytes means short transactions IDs as defined in BIP 152 or 16 bytes truncated 128 bit witness transaction id.
+The gettxfilter message is used to request transactions by transaction IDs with the specified filter types to apply. 
+ID length filed define length of transaction ID is 6 bytes means short transactions IDs as defined in BIP 152. Filter types defined in BIP-block-batch-filters.
 
 {|class="wikitable"
 ! Field Size !! Description !! Data type !! Comments
-|-
-| 1 || ID length || uint8_t || Transaction ID length in bytes
 |-
 | 1-5  || filter type || var_int || Applied filter types
 |-
@@ -53,7 +51,7 @@ ID length filed define length of transaction ID in bytes, 32 bytes means full 25
 
 ==== txfilter ====
 
-txfilter is sent in response to gettxfilters, one for each transaction in the requested list. The message contains the following fields:
+<code>txfilter</code> is sent in response to <code>gettxfilters</code>, one for each transaction in the requested list. The message contains the following fields:
 
 {|class="wikitable"
 ! Field Size !! Description !! Data type !! Comments
@@ -65,7 +63,7 @@ txfilter is sent in response to gettxfilters, one for each transaction in the re
 | variable  || filter || byte[] || GCS filter
 |}
 
-Filter types defined in BIP-block-batch-filters and determine which data is included in a transaction GCS filter.
+Filter types defined in BIP-block-batch-filters and determine which data is included in a transaction filters.
 
 
 ==== getcfproof ====
