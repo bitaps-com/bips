@@ -118,7 +118,7 @@ interpreted as described in RFC 2119.
 * <code>P2WPKH  - 0x08</code>
 * <code>P2WPSH  - 0x16</code>
 
-Filter types support filter combinations, which means that in case we need block filters for all address types we should calculate 0x01 + 0x02 + 0x04 + 0x08 + 0x16 = 0x25. To reduce bandwidth usage, the light client should request only the necessary filter types. In case combined filter types are requested, the filters are serialized sequentially according to the type index.
+Filter types support filter combinations, which means that in case we need block filters for all address types we should calculate 0x01 + 0x02 + 0x04 + 0x08 + 0x16 = 0x25. To reduce bandwidth usage, the light client SHOULD request only the necessary filter types. In case combined filter types are requested, the filters are serialized sequentially according to the type index. Representation of filter types in the form of bits corresponding to the type was developed for compatibility with the BIP 157 protocol.
 
 ==== Filter elements ====
 
@@ -181,6 +181,10 @@ def encode_gcs(elements):
 
 For each transaction, filters are derived containing sets of unique elements from standard scripts associated with transaction. Set of unique elements are hashed with sipHash function and mapped into array with the size <code>F = 2 ^ 32</code>. After calculations, the elements are serialized into a byte string. More details descibed here <ref>https://github.com/bitaps-com/bips/blob/master/bip-mempool-transactions-filters.mediawiki</ref>.
 
+==== Filters batch size ====
+
+The most optimal value of the batche size obtained during testing of various sizes is about 1000 blocks per batch. Increasing the size of the batch leads to an increase in the number of duplicates and an increase in the range of values of pointers to unique elements. This leads to an increase in the size of the compressed pointer to the element and an increase in the compressed size of the element itself since delta coding is more effective when there are more elements. For a more compatible design with BIP 157, a value of 1000 blocks is definitely. Implementation of this BIP MUST use 1000 blocks per batch.
+ 
 
 ==== Block filter ====
 
@@ -261,16 +265,33 @@ def create_filter(elements, duplicates,  batch_map, last_hash, tx_filters):
 
 ==== Filter header ====
 
-Filter header defined as <code>header = SHA256(previous_header +  SHA256(serialized_block_filter))</code>. In case previous header not exist used 32 zero bytes as value. Chaining filter headers is another one adoption step for filter block  commitments softfork.  This allows to request coinbase transaction and merkle proof for this transaction only for the last block. Otherwise, we would have to download coinbase transaction for each block to be able verify block filters with commitment. Chained headers provide cryptographic proof of the validity of all previous filters in case last one is verified.
+Filter header defined as <code>header = double_SHA256(double_SHA256(serialized_block_filter) + previous_header)</code>. In case previous header not exist used 32 zero bytes as value. Chaining filter headers is another one adoption step for filter block  commitments softfork.  This allows to request coinbase transaction and merkle proof for this transaction only for the last block. Otherwise, we would have to download coinbase transaction for each block to be able verify block filters with commitment. Chained headers provide cryptographic proof of the validity of all previous filters in case last one is verified.
 
 
 ==== Commitment structure ====
 
 Block filters commitment this is merkle root from merkle tree constructed from filter headers. At example merkle tree until segwit softfork constructed from filter types: 0x01, 0x02, 0x04. After segwit softfork and first transaction with new standard script types we should construct merkle tree from next filer types:  0x01, 0x02, 0x04, 0x08, 0x16.  Merkle tree construction algorith is same as block transaction merkletree (double sha256 hash function, odd tree levels are normalized by duplicating the last hash)
 
-== Node operation ==
+== Full Node operation ==
 
-Changes and additions to BIP 157 Node Operations. 
+This BIP is intended for use in the BIP 157 lightweight client protocol, but some features of this BIP will add certain rules to the protocol.
+
+Full nodes that support this BIP MUST generate filters of all types described in this BIP. This need is due to the fact that this BIP means full adaptation to the possible future bitcoin protocol changes where filter commitment will be accepted as one of the consensus rules of block validation. In order to create a filter commitment, nodes needs to calculate the merkle root from the filter headers of all types described in this BIP; when adding new filter types in the future, this requirement SHOULD apply to all subsequent filter types.
+
+==== getcfilters/cfilter messages ====
+Filter types described in this BIP support filter combinations,  which means that in case light client need block filters for several script types, filter type formed from the set bits corresponding to the type.
+
+For <code>getcfilters</code> requests where a combination of several filter types for block is requested, MUST sent response  <code>cfilter</code>. 
+
+* <code>FilterBytes</code> with all the requested block filters that are serialized sequentially according to filter type number in ascending order. 
+* <code>FilterType</code> may not be the same as requested MUST contains only combinations of requested and existed filters in requested range of blocks. At example before segwit softfork filters for P2WSH script not exist and this filter type bit MUST set 0 in this message. After the first creation of a filter for any type, the filter is considered to exist for all subsequent blocks, even if it does not contain elements. In case requested only filter types  not yet existed in block range response MUST contains 0 bytes in <code>FilterBytes</code>.
+
+==== cfheaders/cfheaders messages ====
+
+For <code>cfheaders</code> requests where a single or combination of several types of filter headers is requested, MUST sent response  <code>cfheaders</code>.
+
+* <code>FilterHashes</code> entries MUST be the merkle root from merkle tree constructed from filter headers(means calculated header not hash from serialized filer) for specified types. Block filter headers  used to construct merkle tree is  in ascending order by filter type number. 
+* <code>FilterType</code> may not be the same as requested and MUST contains only combinations of requested and existed filters in requested range of blocks.
 
 == Light client operation ==
 
