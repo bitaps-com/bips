@@ -112,13 +112,13 @@ interpreted as described in RFC 2119.
 
 ==== Filter types ====
 
-* <code>P2PK - 0x01</code>
-* <code>P2PKH  - 0x02</code>
-* <code>P2SH  - 0x04</code>
-* <code>P2WPKH  - 0x08</code>
-* <code>P2WPSH  - 0x16</code>
+* <code>P2PK - 1</code>
+* <code>P2PKH  - 2</code>
+* <code>P2SH  - 4</code>
+* <code>P2WPKH  - 8</code>
+* <code>P2WPSH  - 16</code>
 
-Filter types support filter combinations, which means that in case we need block filters for all address types we should calculate 0x01 + 0x02 + 0x04 + 0x08 + 0x16 = 0x25. To reduce bandwidth usage, the light client SHOULD request only the necessary filter types. In case combined filter types are requested, the filters are serialized sequentially according to the type index. Representation of filter types in the form of bits corresponding to the type was developed for compatibility with the BIP 157 protocol.
+Filter types support filter combinations, which means that in case we need block filters for all address types we should calculate 1 + 2 + 4 + 8 + 16 = 31. To reduce bandwidth usage, the light client SHOULD request only the necessary filter types. In case combined filter types are requested, the filters are serialized sequentially according to the type index. Representation of filter types in the form of bits corresponding to the type was developed for compatibility with the BIP 157 protocol.
 
 ==== Filter elements ====
 
