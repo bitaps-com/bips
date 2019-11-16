@@ -266,12 +266,12 @@ def create_filter(elements, duplicates,  batch_map, last_hash, tx_filters):
 
 ==== Filter header ====
 
-Filter header defined as <code>header = double_SHA256(double_SHA256(serialized_block_filter) + previous_header)</code>. In case previous header not exist used 32 zero bytes as value. Chaining filter headers is another one adoption step for filter block  commitments softfork.  This allows to request coinbase transaction and merkle proof for this transaction only for the last block. Otherwise, we would have to download coinbase transaction for each block to be able verify block filters with commitment. Chained headers provide cryptographic proof of the validity of all previous filters in case last one is verified.
+Filter header defined as <code>header = double_SHA256(double_SHA256(serialized_block_filter) + previous_header)</code>. In case previous header not exist used 32 zero bytes as value. Chaining filter headers is another one adoption step for filter block  commitments softfork.  This allows to request coinbase transaction and merkle proof for this transaction only for the last block. Otherwise, we would have to download coinbase transaction for each block to be able verify block filters with commitment. Chained headers provide cryptographic proof of the validity of all previous filters in case last one is verified. Filter header not calculated for filter type with empty filter.
 
 
 ==== Commitment structure ====
 
-Block filters commitment this is merkle root from merkle tree constructed from filter headers. At example merkle tree until segwit softfork constructed from filter types: 0x01, 0x02, 0x04. After segwit softfork and first transaction with new standard script types we should construct merkle tree from next filer types:  0x01, 0x02, 0x04, 0x08, 0x16.  Merkle tree construction algorith is same as block transaction merkletree (double sha256 hash function, odd tree levels are normalized by duplicating the last hash)
+Block filters commitment this is merkle root from merkle tree constructed from filter headers for non empty and exist filter types. At example merkle tree until segwit softfork constructed from filter types: 0x01, 0x02, 0x04. After segwit softfork and first transaction with new standard script types we should construct merkle tree from next filer types:  0x01, 0x02, 0x04, 0x08, 0x16.  Merkle tree construction algorith is same as block transaction merkletree (double sha256 hash function, odd tree levels are normalized by duplicating the last hash)
 
 == Full Node operation ==
 
@@ -302,7 +302,7 @@ For <code>cfheaders</code> requests where a single or combination of several typ
 
 ===== getcfbheaders =====
 
-<code>getcfbheaders</code> is used to request batch headers for specified block filter types. Batch filters header - this is filter header for last block in batch. Clients may use this message to get starting point for batch and to be able reconstruct filter headers for all subsequent blocks. At example node not save all blocks and block filter headers, to start verification for headers required to know previous block filter header for each filter type.
+<code>getcfbheaders</code> is used to request batch headers for specified block filter types. Batch filters header - this is last calculated filter headers for batch. Clients may use this message to get starting point for batch and to be able reconstruct filter headers for all subsequent blocks. At example node not save all blocks and block filter headers, to start verification for headers required to know previous block filter header for each filter type.
 
 <code>getcfbheaders</code> message contains the following fields:
 
@@ -361,7 +361,8 @@ For <code>cfheaders</code> requests where a single or combination of several typ
 | The batch headers 
 |}
 
-# The FilterType and StopHash SHOULD match the fields in the <code>getcfbheaders</code> request.
+* <code>StopHashrange</code> and <code>FilterType</code> SHOULD match the fields in the <code>getcfbheaders</code> request.
+* If requested filter type is not yet exist zero hash MUST returned as batch header for this filter type.
 # BatchHeaders MUST have as many records for each block as the number of filter types requested on the chain terminating in StopHash. Entries MUST be the filter headers for the last block of each batch for requested types in ascending order of filter type and block height.
 
 
