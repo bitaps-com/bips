@@ -287,9 +287,9 @@ For <code>getcfilters</code> requests where a combination of several filter type
 * <code>FilterBytes</code> with all the requested block filters that are serialized sequentially according to filter type number in ascending order. 
 * <code>FilterType</code> may not be the same as requested MUST contains only combinations of requested and existed filters in requested range of blocks. At example before segwit softfork filters for P2WSH script not exist and this filter type bit MUST set 0 in this message. After the first creation of a filter for any type, the filter is considered to exist for all subsequent blocks, even if it does not contain elements. In case requested only filter types  not yet existed in block range response MUST contains 0 bytes in <code>FilterBytes</code>.
 
-==== cfheaders/cfheaders messages ====
+==== getcfheaders/cfheaders messages ====
 
-For <code>cfheaders</code> requests where a single or combination of several types of filter headers is requested, MUST sent response  <code>cfheaders</code>.
+For <code>getcfheaders</code> requests where a single or combination of several types of filter headers is requested, MUST sent response  <code>cfheaders</code>.
 
 * <code>FilterHashes</code> entries MUST be the merkle root from merkle tree constructed from filter headers(means calculated header not hash from serialized filer) for specified types. Block filter headers  used to construct merkle tree is  in ascending order by filter type number. 
 * <code>FilterType</code> may not be the same as requested and MUST contains only combinations of requested and existed filters in requested range of blocks.
